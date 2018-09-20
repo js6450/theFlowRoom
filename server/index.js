@@ -54,13 +54,15 @@ io.on('connection', function(socket){
         //status 1: client connection
         socket.userType = data;
 
+        console.log("User of type " + socket.userType + " with id " + socket.id + " connected");
+
         if(socket.userType == 0){
             socket.kinectIndex = kinectCount;
-
             kinectCount++;
+
+            console.log("Current number of kinect clients connected: " + kinectCount);
         }
 
-        console.log("User of type " + socket.userType + " with id " + socket.id + " connected");
     });
 
     socket.on('message', function(data){
@@ -87,11 +89,15 @@ io.on('connection', function(socket){
     });
 
     socket.on('disconnect', function(){
-        if(socket.userType == 0){
-            kinectData.splice(socket.kinectIndex);
-        }
 
-       console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
+        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
+
+        if(socket.userType == 0){
+            kinectData.splice(socket.kinectIndex, 1);
+            kinectCount--;
+
+            console.log("Current number of kinect clients connected: " + kinectCount);
+        }
     });
 
 });

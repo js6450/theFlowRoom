@@ -5,11 +5,12 @@ const client = new WebSocketClient();
 
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
-const socket = io('http://localhost:8000');
+//const socket = io('http://localhost:8000');
+const socket = io('http://128.122.151.58:8000');
 
 const fs = require('fs');
 
-var liveFeed = false;
+var liveFeed = true;
 var saveFeed = false;
 var firstData = true;
 
