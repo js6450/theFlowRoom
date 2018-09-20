@@ -3,6 +3,21 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+const fs = require('fs');
+const util = require('util');
+
+var logName = new Date().toISOString().split('T')[0] + ".log";
+
+var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+    var timeStamp = new Date().toISOString();
+
+    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
+};
+
 var kinectCount = 0;
 var kinectData = [];
 

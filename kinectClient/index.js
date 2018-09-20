@@ -3,9 +3,23 @@ var Kinect2, kinect;
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
 //const socket = io('http://localhost:8000');
-const socket = io('http://128.122.151.58:8000');
+const addr = "http://128.122.151.58:8000"
+const socket = io(addr);
 
 const fs = require('fs');
+const util = require('util');
+
+var logName = new Date().toISOString().split('T')[0] + ".log";
+
+var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+    var timeStamp = new Date().toISOString();
+
+    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
+};
 
 var liveFeed = true;
 var saveFeed = false;
@@ -36,7 +50,7 @@ function init(){
 init();
 
 socket.on('connect', function(socket){
-    console.log((new Date()) + " connection made");
+    console.log("Connection made to " + addr);
 
     setConnection();
 
