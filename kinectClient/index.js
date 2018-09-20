@@ -11,9 +11,10 @@ const fs = require('fs');
 
 var liveFeed = false;
 var saveFeed = false;
+var firstData = true;
 
 var dataDest = "data/";
-var dataOrigin = "data/skeleton.json";
+var dataOrigin = "data/0918-01.json";
 var dataIndex = 0;
 
 var skeletonData = [];
@@ -58,11 +59,27 @@ socket.on('connect', function(socket){
 
 socket.on('disconnect', function(socket){
     stopSkeletonTracking();
+
+    if(saveFeed){
+        fs.appendFile(dataDest, "]", 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 });
 
 
 function setConnection(){
     socket.emit('status', 0);
+
+    if(saveFeed){
+        fs.writeFile(dataDest, '[', 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 }
 
 /*
@@ -136,14 +153,6 @@ function startSkeletonTracking() {
             });
 
             if(newBody != null){
-                if(saveFeed){
-                    fs.appendFile(newBody, data, 'utf8', function(err){
-                        if(err){
-                            return console.log(err);
-                        }
-                    });
-                }
-
                 sendData(newBody);
             }
 
@@ -254,6 +263,21 @@ function sendData(newBody){
   //  console.log((new Date()) + " sending new data");
     var data = JSON.stringify(newBody);
     socket.emit('message', data);
+
+    if(saveFeed && data != "[]"){
+
+        if(firstData){
+            firstData = false;
+        }else{
+            data = ", " + data;
+        }
+
+        fs.appendFile(dataDest, data, 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 }
 
 /*

@@ -87,6 +87,10 @@ io.on('connection', function(socket){
     });
 
     socket.on('disconnect', function(){
+        if(socket.userType == 0){
+            kinectData.splice(socket.kinectIndex);
+        }
+
        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
     });
 
