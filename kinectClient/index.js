@@ -1,8 +1,5 @@
 var Kinect2, kinect;
 
-const WebSocketClient = require('websocket').client;
-const client = new WebSocketClient();
-
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
 //const socket = io('http://localhost:8000');
@@ -86,7 +83,6 @@ function setConnection(){
 /*
 Prep Kinect for live feed
  */
-
 var RAWWIDTH = 512;
 var RAWHEIGHT = 424;
 
@@ -94,9 +90,6 @@ var busy = false;
 
 var sendAllBodies = false;
 var rawDepth = false;
-
-// Key Tracking needs cleanup
-var trackedBodyIndex = -1;
 
 var jointCoords = [];
 var depthData = [];
@@ -119,14 +112,7 @@ function startSkeletonTracking() {
 
         kinect.on('bodyFrame', function (bodyFrame) {
 
-            // if (sendAllBodies) {
-            //
-            // }
-
             var index = 0;
-
-            // var bodyIndex = 0;
-            // var totalBody = [];
 
             var newBody = [];
             bodyFrame.bodies.forEach(function (body) {
@@ -156,8 +142,6 @@ function startSkeletonTracking() {
             if(newBody != null){
                 sendData(newBody);
             }
-
-
         });
         kinect.openBodyReader();
     }else{
@@ -189,9 +173,6 @@ function calcJointCoords(joints){
 }
 
 function getDepthForJSON(jointCoords, pixels){
-
-   // console.log('calculating depth for json');
-
     for(var i = 0; i < jointCoords.length; i++){
 
         var pArray = [];
@@ -243,17 +224,12 @@ function getDepthForJSON(jointCoords, pixels){
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
                     pArray.push({"x": x, "y": y, "z": z});
                 }
-
-                // console.log(i + ": " + pArray.length);
-                // console.log('jointX: ' + jointX + ", jointY: " + jointY);
             }
 
             jointCoords[i].px = pArray;
         }
 
     }
-
-   // console.log('done calculating');
 }
 
 function map (num, in_min, in_max, out_min, out_max) {
@@ -286,10 +262,8 @@ Prep data for sending saved JSON data
  */
 
 function sendSavedData(){
-
     if(socket.connected){
         //console.log(dataIndex);
-
         var currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
@@ -301,5 +275,4 @@ function sendSavedData(){
 
         setTimeout(sendSavedData, 50);
     }
-
 }
