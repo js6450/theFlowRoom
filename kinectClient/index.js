@@ -14,7 +14,7 @@ var saveFeed = false;
 var firstData = true;
 
 var dataDest = "data/";
-var dataOrigin = "data/0918-01.json";
+var dataOrigin = "data/skeleton.json";
 var dataIndex = 0;
 
 var skeletonData = [];

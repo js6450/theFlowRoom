@@ -10,7 +10,7 @@ const socket = io('http://localhost:8000');
 const fs = require('fs');
 
 var liveFeed = false;
-var dataOrigin = "data/skeleton2.json";
+var dataOrigin = "data/skeleton.json";
 var dataIndex = 0;
 
 var skeletonData = [];
