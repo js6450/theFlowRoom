@@ -76,6 +76,11 @@ io.on('connection', function(socket){
         if(socket.userType == 0){
             kinectData[socket.kinectIndex] = data;
         }
+
+    });
+
+    socket.on('sendLog', function(data){
+        console.log(data);
     });
 
     socket.on('disconnect', function(){

@@ -1,15 +1,31 @@
 var Kinect2, kinect;
 
-const WebSocketClient = require('websocket').client;
-const client = new WebSocketClient();
-
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
-const socket = io('http://localhost:8000');
+const addr = 'http://localhost:8000';
+//const addr = "http://128.122.151.58:8000"
+const socket = io(addr);
 
 const fs = require('fs');
+const util = require('util');
+
+var logName = new Date().toISOString().split('T')[0] + ".log";
+
+var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+    var timeStamp = new Date().toISOString();
+
+    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
+};
 
 var liveFeed = false;
+var saveFeed = false;
+var firstData = true;
+
+var dataDest = "data/";
 var dataOrigin = "data/skeleton.json";
 var dataIndex = 0;
 
@@ -23,12 +39,18 @@ function init(){
     }else{
         console.log('Saved Data Mode');
     }
+
+    if(saveFeed){
+       dataDest += Date.now() + ".json";
+
+       console.log("Saving data to " + dataDest);
+    }
 }
 
 init();
 
 socket.on('connect', function(socket){
-    console.log((new Date()) + " connection made");
+    console.log("Connection made to " + addr);
 
     setConnection();
 
@@ -48,18 +70,35 @@ socket.on('connect', function(socket){
 });
 
 socket.on('disconnect', function(socket){
+    console.log('Socket with ' + socket.id + ' disconnected');
+
     stopSkeletonTracking();
+
+    if(saveFeed){
+        fs.appendFile(dataDest, "]", 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 });
 
 
 function setConnection(){
     socket.emit('status', 0);
+
+    if(saveFeed){
+        fs.writeFile(dataDest, '[', 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 }
 
 /*
 Prep Kinect for live feed
  */
-
 var RAWWIDTH = 512;
 var RAWHEIGHT = 424;
 
@@ -68,18 +107,17 @@ var busy = false;
 var sendAllBodies = false;
 var rawDepth = false;
 
-// Key Tracking needs cleanup
-var trackedBodyIndex = -1;
+var bodyCount = 0;
 
 var jointCoords = [];
 var depthData = [];
 
 function startSkeletonTracking() {
-    console.log('starting skeleton');
+    console.log('Starting skeleton tracking');
     rawDepth = true;
 
     if (kinect.open()) {
-        console.log('kinect is open');
+        console.log('Kinect device is open');
         kinect.on('rawDepthFrame', function (newPixelData) {
             if (busy) {
                 return;
@@ -92,18 +130,14 @@ function startSkeletonTracking() {
 
         kinect.on('bodyFrame', function (bodyFrame) {
 
-            // if (sendAllBodies) {
-            //
-            // }
-
             var index = 0;
+            var newBody = [];
             bodyFrame.bodies.forEach(function (body) {
                 if (body.tracked) {
 
                     //console.log((new Date()) + ' body tracked!!');
                    // console.log((new Date()) + " body available: " + bodyAvailable);
 
-                    var newBody = [];
                     jointCoords = calcJointCoords(body.joints);
 
                     if (!sendAllBodies) {
@@ -117,12 +151,20 @@ function startSkeletonTracking() {
                                 "rightHandState": body.rightHandState,
                                 "joints": jointCoords
                             });
-
-                            sendData(newBody);
                     }
                     index++;
                 }
             });
+
+            if(bodyCount != index){
+                bodyCount = index;
+
+                console.log("Total number of bodies detected: " + bodyCount);
+            }
+
+            if(newBody != null){
+                sendData(newBody);
+            }
         });
         kinect.openBodyReader();
     }else{
@@ -154,9 +196,6 @@ function calcJointCoords(joints){
 }
 
 function getDepthForJSON(jointCoords, pixels){
-
-   // console.log('calculating depth for json');
-
     for(var i = 0; i < jointCoords.length; i++){
 
         var pArray = [];
@@ -208,17 +247,12 @@ function getDepthForJSON(jointCoords, pixels){
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
                     pArray.push({"x": x, "y": y, "z": z});
                 }
-
-                // console.log(i + ": " + pArray.length);
-                // console.log('jointX: ' + jointX + ", jointY: " + jointY);
             }
 
             jointCoords[i].px = pArray;
         }
 
     }
-
-   // console.log('done calculating');
 }
 
 function map (num, in_min, in_max, out_min, out_max) {
@@ -229,6 +263,21 @@ function sendData(newBody){
   //  console.log((new Date()) + " sending new data");
     var data = JSON.stringify(newBody);
     socket.emit('message', data);
+
+    if(saveFeed && data != "[]"){
+
+        if(firstData){
+            firstData = false;
+        }else{
+            data = ", " + data;
+        }
+
+        fs.appendFile(dataDest, data, 'utf8', function(err){
+            if(err){
+                return console.log(err);
+            }
+        });
+    }
 }
 
 /*
@@ -236,10 +285,8 @@ Prep data for sending saved JSON data
  */
 
 function sendSavedData(){
-
     if(socket.connected){
         //console.log(dataIndex);
-
         var currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
@@ -251,6 +298,4 @@ function sendSavedData(){
 
         setTimeout(sendSavedData, 50);
     }
-
 }
-

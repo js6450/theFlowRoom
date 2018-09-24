@@ -2,8 +2,8 @@ var Kinect2, kinect;
 
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
-//const socket = io('http://localhost:8000');
-const addr = "http://128.122.151.58:8000"
+const addr = 'http://localhost:8000';
+//const addr = "http://128.122.151.58:8000"
 const socket = io(addr);
 
 const fs = require('fs');
@@ -22,7 +22,7 @@ console.log = function(d) { //
 };
 
 var liveFeed = true;
-var saveFeed = false;
+var saveFeed = true;
 var firstData = true;
 
 var dataDest = "data/";
@@ -43,7 +43,7 @@ function init(){
     if(saveFeed){
        dataDest += Date.now() + ".json";
 
-       console.log("Data will save to " + dataDest);
+       console.log("Saving data to " + dataDest);
     }
 }
 
@@ -70,6 +70,8 @@ socket.on('connect', function(socket){
 });
 
 socket.on('disconnect', function(socket){
+    console.log('Socket with ' + socket.id + ' disconnected');
+
     stopSkeletonTracking();
 
     if(saveFeed){
@@ -105,15 +107,17 @@ var busy = false;
 var sendAllBodies = false;
 var rawDepth = false;
 
+var bodyCount = 0;
+
 var jointCoords = [];
 var depthData = [];
 
 function startSkeletonTracking() {
-    console.log('starting skeleton');
+    console.log('Starting skeleton tracking');
     rawDepth = true;
 
     if (kinect.open()) {
-        console.log('kinect is open');
+        console.log('Kinect device is open');
         kinect.on('rawDepthFrame', function (newPixelData) {
             if (busy) {
                 return;
@@ -127,7 +131,6 @@ function startSkeletonTracking() {
         kinect.on('bodyFrame', function (bodyFrame) {
 
             var index = 0;
-
             var newBody = [];
             bodyFrame.bodies.forEach(function (body) {
                 if (body.tracked) {
@@ -152,6 +155,12 @@ function startSkeletonTracking() {
                     index++;
                 }
             });
+
+            if(bodyCount != index){
+                bodyCount = index;
+
+                console.log("Total number of bodies detected: " + bodyCount);
+            }
 
             if(newBody != null){
                 sendData(newBody);

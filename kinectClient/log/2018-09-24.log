@@ -1,0 +1,186 @@
+2018-09-24T18:17:49.078Z: Live Mode: Kinect connection made
+2018-09-24T18:37:55.442Z: Live Mode: Kinect connection made
+2018-09-24T18:37:55.464Z: Connection made to http://localhost:8000
+2018-09-24T18:37:55.466Z: Starting skeleton tracking
+2018-09-24T18:37:55.475Z: Kinect device is open
+2018-09-24T18:38:14.706Z: Saved Data Mode
+2018-09-24T18:38:14.720Z: Connection made to http://localhost:8000
+2018-09-24T18:38:14.722Z: Reading saved data
+2018-09-24T18:38:15.174Z: Total data length: 423
+2018-09-24T18:46:53.022Z: Live Mode: Kinect connection made
+2018-09-24T18:46:53.036Z: Connection made to http://localhost:8000
+2018-09-24T18:46:53.039Z: Starting skeleton tracking
+2018-09-24T18:46:53.039Z: Kinect device is open
+2018-09-24T18:46:55.815Z: Total number of bodies detected: 1
+2018-09-24T18:46:56.112Z: Total number of bodies detected: 0
+2018-09-24T18:46:56.314Z: Total number of bodies detected: 1
+2018-09-24T18:46:56.614Z: Total number of bodies detected: 2
+2018-09-24T18:46:56.814Z: Total number of bodies detected: 1
+2018-09-24T18:46:57.612Z: Total number of bodies detected: 0
+2018-09-24T18:47:17.377Z: Total number of bodies detected: 1
+2018-09-24T18:47:27.943Z: Total number of bodies detected: 0
+2018-09-24T18:47:29.444Z: Total number of bodies detected: 1
+2018-09-24T18:47:30.877Z: Total number of bodies detected: 0
+2018-09-24T18:47:32.477Z: Total number of bodies detected: 1
+2018-09-24T18:47:36.543Z: Total number of bodies detected: 0
+2018-09-24T18:47:41.744Z: Total number of bodies detected: 1
+2018-09-24T18:47:47.911Z: Total number of bodies detected: 0
+2018-09-24T18:48:03.889Z: Total number of bodies detected: 1
+2018-09-24T18:48:27.456Z: Total number of bodies detected: 2
+2018-09-24T18:48:29.688Z: Total number of bodies detected: 1
+2018-09-24T18:48:30.222Z: Total number of bodies detected: 0
+2018-09-24T18:48:45.902Z: Socket with undefined disconnected
+2018-09-24T18:48:45.904Z: stopping skeleton
+2018-09-24T18:49:49.283Z: Connection made to http://localhost:8000
+2018-09-24T18:49:49.287Z: Starting skeleton tracking
+2018-09-24T18:49:49.288Z: Kinect device is open
+2018-09-24T18:49:49.293Z: Total number of bodies detected: 1
+2018-09-24T18:49:49.323Z: Total number of bodies detected: 0
+2018-09-24T18:49:49.821Z: Total number of bodies detected: 1
+2018-09-24T18:49:49.827Z: Socket with undefined disconnected
+2018-09-24T18:49:49.828Z: stopping skeleton
+2018-09-24T18:49:51.807Z: Connection made to http://localhost:8000
+2018-09-24T18:49:51.811Z: Starting skeleton tracking
+2018-09-24T18:49:51.813Z: Kinect device is open
+2018-09-24T18:49:52.587Z: Socket with undefined disconnected
+2018-09-24T18:49:52.590Z: stopping skeleton
+2018-09-24T18:50:23.349Z: Connection made to http://localhost:8000
+2018-09-24T18:50:23.351Z: Starting skeleton tracking
+2018-09-24T18:50:23.351Z: Kinect device is open
+2018-09-24T18:50:26.056Z: Total number of bodies detected: 2
+2018-09-24T18:50:28.655Z: Total number of bodies detected: 1
+2018-09-24T18:50:29.688Z: Total number of bodies detected: 2
+2018-09-24T18:50:29.755Z: Total number of bodies detected: 1
+2018-09-24T18:50:29.856Z: Total number of bodies detected: 2
+2018-09-24T18:50:31.154Z: Total number of bodies detected: 1
+2018-09-24T18:50:31.789Z: Total number of bodies detected: 2
+2018-09-24T18:50:31.808Z: Socket with undefined disconnected
+2018-09-24T18:50:31.812Z: stopping skeleton
+2018-09-24T18:51:05.517Z: Connection made to http://localhost:8000
+2018-09-24T18:51:05.519Z: Starting skeleton tracking
+2018-09-24T18:51:05.520Z: Kinect device is open
+2018-09-24T18:51:05.522Z: Total number of bodies detected: 0
+2018-09-24T18:51:06.635Z: Socket with undefined disconnected
+2018-09-24T18:51:06.637Z: stopping skeleton
+2018-09-24T18:51:56.718Z: Connection made to http://localhost:8000
+2018-09-24T18:51:56.725Z: Starting skeleton tracking
+2018-09-24T18:51:56.727Z: Kinect device is open
+2018-09-24T18:52:00.395Z: Socket with undefined disconnected
+2018-09-24T18:52:00.397Z: stopping skeleton
+2018-09-24T18:52:52.723Z: Connection made to http://localhost:8000
+2018-09-24T18:52:52.729Z: Starting skeleton tracking
+2018-09-24T18:52:52.730Z: Kinect device is open
+2018-09-24T18:53:00.809Z: Total number of bodies detected: 1
+2018-09-24T18:53:04.410Z: Total number of bodies detected: 0
+2018-09-24T18:53:08.010Z: Total number of bodies detected: 1
+2018-09-24T18:53:09.575Z: Total number of bodies detected: 0
+2018-09-24T18:54:57.571Z: Live Mode: Kinect connection made
+2018-09-24T18:54:57.573Z: Saving data to data/1537815297573.json
+2018-09-24T18:54:57.585Z: Connection made to http://localhost:8000
+2018-09-24T18:54:57.588Z: Starting skeleton tracking
+2018-09-24T18:54:57.589Z: Kinect device is open
+2018-09-24T18:54:58.811Z: Total number of bodies detected: 1
+2018-09-24T18:55:00.612Z: Total number of bodies detected: 2
+2018-09-24T18:55:01.641Z: Total number of bodies detected: 1
+2018-09-24T18:55:02.410Z: Total number of bodies detected: 2
+2018-09-24T18:55:03.443Z: Total number of bodies detected: 1
+2018-09-24T18:56:05.780Z: Live Mode: Kinect connection made
+2018-09-24T18:56:05.782Z: Saving data to data/1537815365782.json
+2018-09-24T18:56:05.795Z: Connection made to http://localhost:8000
+2018-09-24T18:56:05.797Z: Starting skeleton tracking
+2018-09-24T18:56:05.798Z: Kinect device is open
+2018-09-24T18:56:07.475Z: Total number of bodies detected: 1
+2018-09-24T18:56:15.009Z: Total number of bodies detected: 2
+2018-09-24T18:56:31.701Z: Live Mode: Kinect connection made
+2018-09-24T18:56:31.703Z: Saving data to data/1537815391703.json
+2018-09-24T18:56:31.716Z: Connection made to http://localhost:8000
+2018-09-24T18:56:31.719Z: Starting skeleton tracking
+2018-09-24T18:56:31.720Z: Kinect device is open
+2018-09-24T18:56:33.176Z: Total number of bodies detected: 1
+2018-09-24T18:56:36.541Z: Total number of bodies detected: 2
+2018-09-24T18:56:37.110Z: Total number of bodies detected: 1
+2018-09-24T18:56:37.742Z: Total number of bodies detected: 2
+2018-09-24T18:56:42.939Z: Live Mode: Kinect connection made
+2018-09-24T18:56:42.942Z: Saving data to data/1537815402942.json
+2018-09-24T18:56:42.954Z: Connection made to http://localhost:8000
+2018-09-24T18:56:42.957Z: Starting skeleton tracking
+2018-09-24T18:56:42.958Z: Kinect device is open
+2018-09-24T18:56:45.775Z: Total number of bodies detected: 1
+2018-09-24T18:56:49.042Z: Total number of bodies detected: 2
+2018-09-24T18:56:50.740Z: Total number of bodies detected: 1
+2018-09-24T18:57:04.001Z: Total number of bodies detected: 0
+2018-09-24T18:57:11.184Z: Live Mode: Kinect connection made
+2018-09-24T18:57:11.186Z: Saving data to data/1537815431186.json
+2018-09-24T18:57:11.198Z: Connection made to http://localhost:8000
+2018-09-24T18:57:11.201Z: Starting skeleton tracking
+2018-09-24T18:57:11.202Z: Kinect device is open
+2018-09-24T18:57:12.642Z: Total number of bodies detected: 1
+2018-09-24T18:57:20.936Z: Live Mode: Kinect connection made
+2018-09-24T18:57:20.938Z: Saving data to data/1537815440938.json
+2018-09-24T18:57:20.951Z: Connection made to http://localhost:8000
+2018-09-24T18:57:20.954Z: Starting skeleton tracking
+2018-09-24T18:57:20.955Z: Kinect device is open
+2018-09-24T18:57:22.209Z: Total number of bodies detected: 1
+2018-09-24T18:57:32.793Z: Live Mode: Kinect connection made
+2018-09-24T18:57:32.795Z: Saving data to data/1537815452795.json
+2018-09-24T18:57:32.808Z: Connection made to http://localhost:8000
+2018-09-24T18:57:32.811Z: Starting skeleton tracking
+2018-09-24T18:57:32.811Z: Kinect device is open
+2018-09-24T18:57:34.776Z: Total number of bodies detected: 1
+2018-09-24T18:59:25.504Z: Live Mode: Kinect connection made
+2018-09-24T18:59:25.506Z: Saving data to data/1537815565506.json
+2018-09-24T18:59:25.518Z: Connection made to http://localhost:8000
+2018-09-24T18:59:25.521Z: Starting skeleton tracking
+2018-09-24T18:59:25.522Z: Kinect device is open
+2018-09-24T18:59:27.377Z: Total number of bodies detected: 2
+2018-09-24T18:59:43.570Z: Live Mode: Kinect connection made
+2018-09-24T18:59:43.573Z: Saving data to data/1537815583573.json
+2018-09-24T18:59:43.585Z: Connection made to http://localhost:8000
+2018-09-24T18:59:43.588Z: Starting skeleton tracking
+2018-09-24T18:59:43.589Z: Kinect device is open
+2018-09-24T18:59:44.844Z: Total number of bodies detected: 2
+2018-09-24T18:59:57.608Z: Live Mode: Kinect connection made
+2018-09-24T18:59:57.610Z: Saving data to data/1537815597610.json
+2018-09-24T18:59:57.622Z: Connection made to http://localhost:8000
+2018-09-24T18:59:57.624Z: Starting skeleton tracking
+2018-09-24T18:59:57.626Z: Kinect device is open
+2018-09-24T18:59:58.943Z: Total number of bodies detected: 2
+2018-09-24T19:00:07.487Z: Live Mode: Kinect connection made
+2018-09-24T19:00:07.490Z: Saving data to data/1537815607490.json
+2018-09-24T19:00:07.502Z: Connection made to http://localhost:8000
+2018-09-24T19:00:07.505Z: Starting skeleton tracking
+2018-09-24T19:00:07.506Z: Kinect device is open
+2018-09-24T19:00:08.745Z: Total number of bodies detected: 2
+2018-09-24T19:00:30.840Z: Live Mode: Kinect connection made
+2018-09-24T19:00:30.843Z: Saving data to data/1537815630843.json
+2018-09-24T19:00:30.856Z: Connection made to http://localhost:8000
+2018-09-24T19:00:30.859Z: Starting skeleton tracking
+2018-09-24T19:00:30.859Z: Kinect device is open
+2018-09-24T19:00:32.111Z: Total number of bodies detected: 2
+2018-09-24T19:00:32.274Z: Total number of bodies detected: 3
+2018-09-24T19:00:41.293Z: Live Mode: Kinect connection made
+2018-09-24T19:00:41.296Z: Saving data to data/1537815641296.json
+2018-09-24T19:00:41.308Z: Connection made to http://localhost:8000
+2018-09-24T19:00:41.311Z: Starting skeleton tracking
+2018-09-24T19:00:41.312Z: Kinect device is open
+2018-09-24T19:00:42.577Z: Total number of bodies detected: 2
+2018-09-24T19:00:42.740Z: Total number of bodies detected: 3
+2018-09-24T19:00:50.110Z: Live Mode: Kinect connection made
+2018-09-24T19:00:50.113Z: Saving data to data/1537815650113.json
+2018-09-24T19:00:50.126Z: Connection made to http://localhost:8000
+2018-09-24T19:00:50.128Z: Starting skeleton tracking
+2018-09-24T19:00:50.130Z: Kinect device is open
+2018-09-24T19:00:53.542Z: Total number of bodies detected: 1
+2018-09-24T19:00:53.907Z: Total number of bodies detected: 2
+2018-09-24T19:00:54.140Z: Total number of bodies detected: 3
+2018-09-24T19:00:55.547Z: Total number of bodies detected: 2
+2018-09-24T19:00:55.606Z: Total number of bodies detected: 1
+2018-09-24T19:00:55.973Z: Total number of bodies detected: 0
+2018-09-24T19:01:02.782Z: Live Mode: Kinect connection made
+2018-09-24T19:01:02.784Z: Saving data to data/1537815662784.json
+2018-09-24T19:01:02.796Z: Connection made to http://localhost:8000
+2018-09-24T19:01:02.799Z: Starting skeleton tracking
+2018-09-24T19:01:02.800Z: Kinect device is open
+2018-09-24T19:01:04.976Z: Total number of bodies detected: 1
+2018-09-24T19:01:05.074Z: Total number of bodies detected: 2
+2018-09-24T19:01:05.407Z: Total number of bodies detected: 3

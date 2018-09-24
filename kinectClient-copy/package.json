@@ -12,7 +12,8 @@
     "fs": "0.0.1-security",
     "kinect2": "^0.1.6",
     "socket.io": "^2.1.1",
-    "websocket": "^1.0.26",
+    "util": "^0.11.0",
+    "websocket": "^1.0.28",
     "ws": "^6.0.0"
   }
 }

@@ -4,19 +4,14 @@ var socket = io();
 
 var kinect = [];
 
-var mainX;
-var mainY;
-
-var index = 0;
-
-var frameData;
+var kinectCount = 0;
+var bodyCount = 0;
 
 function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL);
     noStroke();
 
     socket.emit('status', 1);
-
     socket.on('sendData', onSendData);
 }
 
@@ -32,7 +27,7 @@ function draw() {
             var currentKinect = kinect[k];
 
             for(var b = 0; b < currentKinect.length; b++){
-                var mainArray = kinect[k][b].joints;
+                var mainArray = currentKinect[b].joints;
 
                 for (var i = 0; i < mainArray.length; i++) {
 
@@ -49,15 +44,7 @@ function draw() {
 
                             var mappedFill = map(rawZ, -500, 500, 255, 0);
 
-                            // var rawFill = mainArray[i].depthPixels[j].p[0] * 10 + mainArray[i].depthPixels[j].p[1];
-                            // var mappedFill = map(rawFill, 0, 4500, 255, 0);
-                            // var mappedZ = map(rawFill, 0, 4500, 0, -500);
-                            // var mappedSize = map(rawFill, 0, 4500, 1, 20);
-
                             fill(mappedFill, 100);
-                            // fill(mainArray[i].depthPixels[j].p[0], mainArray[i].depthPixels[j].p[1], 0);
-                            // ellipse(mappedX, mappedY, mappedSize, mappedSize);
-
                             push();
                             translate(mappedX, mappedY, mappedZ);
                             sphere(5);
@@ -66,12 +53,6 @@ function draw() {
                         }
                     }
                 }
-
-                // index++;
-                //
-                // if (index > kinect.length - 1) {
-                //     index = 0;
-                // }
             }
         }
     }
@@ -80,6 +61,14 @@ function draw() {
 function onSendData(data) {
 
     if(data != null){
+
+        if(kinectCount !== data.length){
+            console.log("send kinect count");
+
+            kinectCount = data.length;
+            socket.emit('sendLog', "Web Client - current number of kinects received: " + kinectCount);
+        }
+
         for(var i = 0; i < data.length; i++){
             kinect[i] = JSON.parse(data[i]);
         }
