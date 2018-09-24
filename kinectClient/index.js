@@ -2,8 +2,8 @@ var Kinect2, kinect;
 
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
-const addr = 'http://localhost:8000';
-//const addr = "http://128.122.151.57:8000"
+//const addr = 'http://localhost:8000';
+const addr = "http://128.122.151.57:8000"
 const socket = io(addr);
 
 const fs = require('fs');
@@ -21,7 +21,7 @@ console.log = function(d) { //
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-var liveFeed = false;
+var liveFeed = true;
 var saveFeed = false;
 var firstData = true;
 

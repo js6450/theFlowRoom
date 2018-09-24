@@ -193,3 +193,7 @@
 2018-09-24T20:11:47.490Z: Reading saved data
 2018-09-24T20:11:47.936Z: Total data length: 423
 2018-09-24T20:12:18.404Z: Socket with undefined disconnected
+2018-09-24T20:23:47.201Z: Live Mode: Kinect connection made
+2018-09-24T20:23:47.227Z: Connection made to http://128.122.151.57:8000
+2018-09-24T20:23:47.230Z: Starting skeleton tracking
+2018-09-24T20:23:47.235Z: Kinect device is open
