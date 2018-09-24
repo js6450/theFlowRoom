@@ -219,14 +219,14 @@ function updateBodies() {
 		// add or remove bodies
 		while ( bodyData.length > bodies.length ) {
 			createBody();
-			console.log( "! Body Added" );
+			//console.log( "! Body Added" );
 		}
 		let bIndex = bodies.length - 1;
 		while ( bodyData.length < bodies.length ) {
 			scene.remove( bodies[bIndex].group );
 			bodies.splice( bIndex, 1 );
 			bIndex--;
-			console.log( "! Body Removed" );
+			//console.log( "! Body Removed" );
 		}
 
 		// main loop
