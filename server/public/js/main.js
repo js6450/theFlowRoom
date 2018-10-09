@@ -16,7 +16,10 @@ const WORLD_DEPTH = 1600;
 
 const BODY_JOINTS_MAX = 21;
 const BODY_PARTICLES_MAX = 610; // TODO: improve this.
-const DEPTH_SCALING = 1.0;
+const DEPTH_SCALING = -1.0;
+
+const BODY_POS_OFFSET_X = -(512 * 0.5);
+const BODY_POS_OFFSET_Y = 0; //424;
 
 const MAX_OF_BODIES = 5;
 const BODY_EFFECT_PARTICLES_MAX = BODY_PARTICLES_MAX * MAX_OF_BODIES * 2;
@@ -27,8 +30,6 @@ console.log("! Flow Particles: " + FLOW_PARTICLES_MAX);
 
 
 var socket = io();
-
-//var kinect;
 
 
 // three.js main
@@ -156,15 +157,15 @@ function init() {
 
 	// TEXTURES
 
-	let floorTexture = textureLoader.load( "img/disturb.jpg" );
+	let floorTexture = textureLoader.load( "img/texture_flow.jpg" );
 	floorTexture.wrapS = THREE.MirroredRepeatWrapping;
 	floorTexture.wrapT = THREE.MirroredRepeatWrapping;
 	floorTexture.repeat.set( 64, 64 );
 
-	flowTexture = textureLoader.load( "img/flow.jpg" );
+	flowTexture = textureLoader.load( "img/texture_dots.jpg" );
 	flowTexture.wrapS = THREE.RepeatWrapping; //MirroredRepeatWrapping;
 	flowTexture.wrapT = THREE.RepeatWrapping; //MirroredRepeatWrapping;
-	flowTexture.repeat.set( 16, 16 );
+	flowTexture.repeat.set( 10, 10 );
 
 	bodyTexture = textureLoader.load( "img/texture_flow.jpg" );
 	bodyTexture.wrapS = THREE.MirroredRepeatWrapping;

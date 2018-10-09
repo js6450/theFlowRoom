@@ -1,10 +1,20 @@
 function createBody( skeleton ) {
 
 	let body = new Body();
-	//body.group.position.x = -300;
-	//body.group.position.y = 100;
-	//body.group.position.z = 0;
 
+	let distribution = 600;
+	body.position = new THREE.Vector3(
+		BODY_POS_OFFSET_X,
+		BODY_POS_OFFSET_Y,
+		0
+	);
+
+	body.position = new THREE.Vector3(
+		Math.random() * distribution - distribution / 2 + BODY_POS_OFFSET_X,
+		BODY_POS_OFFSET_Y,
+		Math.random() * distribution - distribution / 2
+	);
+	body.scale = Math.random() + 0.5;
 
 	// JOINTS PARTICLE BUFFER
 
@@ -18,9 +28,9 @@ function createBody( skeleton ) {
 	for ( let i = 0; i < BODY_JOINTS_MAX; i++ ) {
 		body.joints.particles[i] = new BodyParticle( Math.random() * 600 - 300, Math.random() * 600 - 300, Math.random() * 600 - 300);
 
-		body.joints.positions[ i * 3     ] = body.joints.particles[i].pos.x;
-		body.joints.positions[ i * 3 + 1 ] = body.joints.particles[i].pos.y;
-		body.joints.positions[ i * 3 + 2 ] = body.joints.particles[i].pos.z;
+		body.joints.positions[ i * 3     ] = body.position.x + body.joints.particles[i].pos.x ;
+		body.joints.positions[ i * 3 + 1 ] = body.position.y + body.joints.particles[i].pos.y;
+		body.joints.positions[ i * 3 + 2 ] = body.position.z + body.joints.particles[i].pos.z;
 
 		body.joints.colors[ i * 3     ] = Math.random() * 0.1; //1.0;
 		body.joints.colors[ i * 3 + 1 ] = Math.random() * 0.5; //1.0;
@@ -146,18 +156,20 @@ function createBodyPointCloud() {
 	let instColors = [];
 	let instSizes = [];
 	let instLastTime = [];
+	let instDecaySpeed = [];
 
 	// instanced attributes
 	for ( let i = 0; i < instances; i ++ ) {
 		instOffsets.push( 0, -100000, 0 );
 		instColors.push( Math.random(), Math.random(), Math.random(), Math.random() * 0.5 );
-		instSizes.push( 10.0 + Math.random()*30 );
+		instSizes.push( 10.0 + Math.random() * 30 );
 		instLastTime.push( 0 );
+		instDecaySpeed.push( Math.random() * 0.25 + 0.3 );
 	}
 
 	// box geometry
-	var bufferGeometry = new THREE.BoxBufferGeometry( 0.1, 0.1, 0.1 );
-	var geometry = new THREE.InstancedBufferGeometry();
+	let bufferGeometry = new THREE.BoxBufferGeometry( 0.1, 0.1, 0.1 );
+	let geometry = new THREE.InstancedBufferGeometry();
 	geometry.maxInstancedCount = instances; // set so its initalized for dat.GUI, will be set in first draw otherwise
 
 	// SHAPE
@@ -174,6 +186,7 @@ function createBodyPointCloud() {
 	geometry.addAttribute( 'lastTime', instanceLastTimeAttribute );
 	geometry.addAttribute( 'color', new THREE.InstancedBufferAttribute( new Float32Array( instColors ), 4 ) );
 	geometry.addAttribute( 'size', new THREE.InstancedBufferAttribute( new Float32Array( instSizes ), 1 ) );
+	geometry.addAttribute( 'decaySpeed', new THREE.InstancedBufferAttribute( new Float32Array( instDecaySpeed ), 1 ) );
 
 	// material
 	var material = new THREE.RawShaderMaterial( {
@@ -183,7 +196,7 @@ function createBodyPointCloud() {
 		vertexShader: ShaderLoader.get( "instance_vert" ),
 		fragmentShader: ShaderLoader.get( "instance_frag" ),
 		side: THREE.DoubleSide,
-		blending: THREE.AdditiveBlending,
+		//blending: THREE.AdditiveBlending,
 		transparent: true,
 		depthTest: false
 	} );
@@ -219,14 +232,14 @@ function updateBodies() {
 		// add or remove bodies
 		while ( bodyData.length > bodies.length ) {
 			createBody();
-			//console.log( "! Body Added" );
+			console.log( "! Body Added" );
 		}
 		let bIndex = bodies.length - 1;
 		while ( bodyData.length < bodies.length ) {
 			scene.remove( bodies[bIndex].group );
 			bodies.splice( bIndex, 1 );
 			bIndex--;
-			//console.log( "! Body Removed" );
+			console.log( "! Body Removed" );
 		}
 
 		// main loop
@@ -238,9 +251,9 @@ function updateBodies() {
 			let prevPxIndex = 0;
 			for ( let i = 0; i < skeleton.joints.length; i ++ ) {
 
-				let destX = skeleton.joints[i].x;
-				let destY = skeleton.joints[i].y * -1;
-				let destZ = skeleton.joints[i].z * DEPTH_SCALING;
+				let destX = body.position.x + skeleton.joints[i].x;
+				let destY = body.position.y + skeleton.joints[i].y * -1;
+				let destZ = body.position.z + skeleton.joints[i].z * DEPTH_SCALING;
 
 				var sizes = body.joints.mesh.geometry.attributes.size.array;
 
@@ -266,12 +279,16 @@ function updateBodies() {
 
 
 				if (skeleton.joints[i].px != undefined) {
+
 					for ( let pxIndex = 0; pxIndex < skeleton.joints[i].px.length; pxIndex ++ ) {
 						// let index = prevPxIndex + pxIndex;
 
-						let x = skeleton.joints[i].px[pxIndex].x;
-						let y = skeleton.joints[i].px[pxIndex].y * -1;
-						let z = skeleton.joints[i].px[pxIndex].z * DEPTH_SCALING;
+						// remove error pixels (px.z range: -500 ~ 500)
+						if (skeleton.joints[i].px[pxIndex].z == -500) continue;
+
+						let x = body.position.x + skeleton.joints[i].px[pxIndex].x;
+						let y = body.position.y + skeleton.joints[i].px[pxIndex].y * -1;
+						let z = body.position.z + skeleton.joints[i].px[pxIndex].z * DEPTH_SCALING;
 
 						instanceOffsetAttribute.setXYZ( instanceIndex, x, y, z );
 						instanceLastTimeAttribute.setX( instanceIndex, time * 0.005 );
@@ -281,6 +298,7 @@ function updateBodies() {
 						}
 
 						count ++;
+
 
 						/*
 						let speed = 0.75;
@@ -294,6 +312,7 @@ function updateBodies() {
 						*/
 					}
 				}
+
 				// prevPxIndex += body.pointsMax[i];
 
 				/*

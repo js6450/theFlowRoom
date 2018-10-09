@@ -11,7 +11,7 @@ function createFlow() {
     opacity: 1.0,
     depthTest : false,
     side : THREE.DoubleSide,
-    wireframe : true,
+    //wireframe : true,
     map: flowTexture
   } );
 
@@ -61,8 +61,8 @@ function createFlow() {
   }
   //
   //flowGeometry.addAttribute( 'position', new THREE.BufferAttribute( flow.positions, 3 ).setDynamic( true ) );
-  
-  
+
+
 
   // var line = new THREE.Line( flowGeometry, flowMaterial );
   // scene.add( line );
