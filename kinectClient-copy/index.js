@@ -9,24 +9,29 @@ const socket = io(addr);
 const fs = require('fs');
 const util = require('util');
 
+var saveLog = false;
+
 var logName = new Date().toISOString().split('T')[0] + ".log";
 
 var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
 var log_stdout = process.stdout;
 
-console.log = function(d) { //
+console.log = function(d) {
     var timeStamp = new Date().toISOString();
 
-    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    if(saveLog){
+        log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    }
+
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-var liveFeed = false;
+var liveFeed = true;
 var saveFeed = false;
 var firstData = true;
 
 var dataDest = "data/";
-var dataOrigin = "data/skeleton.json";
+var dataOrigin = "data/1009-color.json";
 var dataIndex = 0;
 
 var skeletonData = [];
@@ -101,6 +106,8 @@ Prep Kinect for live feed
  */
 var RAWWIDTH = 512;
 var RAWHEIGHT = 424;
+var COLWIDTH = 1920;
+var COLHEIGHT = 1080;
 
 var busy = false;
 
@@ -111,6 +118,7 @@ var bodyCount = 0;
 
 var jointCoords = [];
 var depthData = [];
+var colorData = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -118,6 +126,7 @@ function startSkeletonTracking() {
 
     if (kinect.open()) {
         console.log('Kinect device is open');
+
         kinect.on('rawDepthFrame', function (newPixelData) {
             if (busy) {
                 return;
@@ -125,6 +134,22 @@ function startSkeletonTracking() {
             busy = true;
 
             depthData = newPixelData;
+
+         //   console.log("depthData length: " + depthData.length);
+
+            busy = false;
+        });
+
+        kinect.on('colorFrame', function (newPixelData) {
+            if (busy) {
+                return;
+            }
+            busy = true;
+
+            colorData = newPixelData;
+
+           // console.log("colorData length: " + colorData.length);
+
             busy = false;
         });
 
@@ -141,8 +166,7 @@ function startSkeletonTracking() {
                     jointCoords = calcJointCoords(body.joints);
 
                     if (!sendAllBodies) {
-                            var newJoints = [];
-                            getDepthForJSON(jointCoords, depthData);
+                            getDataForJSON(jointCoords, depthData, colorData);
 
                             newBody.push({
                                 "bodyIndex": body.bodyIndex,
@@ -171,6 +195,7 @@ function startSkeletonTracking() {
         console.log('kinect is closed');
     }
     kinect.openRawDepthReader();
+    kinect.openColorReader();
 }
 
 function stopSkeletonTracking() {
@@ -195,7 +220,7 @@ function calcJointCoords(joints){
     return jointCoords;
 }
 
-function getDepthForJSON(jointCoords, pixels){
+function getDataForJSON(jointCoords, depths, colors){
     for(var i = 0; i < jointCoords.length; i++){
 
         var pArray = [];
@@ -204,7 +229,7 @@ function getDepthForJSON(jointCoords, pixels){
         var jointY = jointCoords[i].y;
 
         var zIndex = 2 * (jointY * RAWWIDTH + jointX);
-        var jointZ = Math.round(map(pixels[zIndex] + pixels[zIndex + 1] * 255, 0, 4499, -500, 500));
+        var jointZ = Math.round(map(depths[zIndex] + depths[zIndex + 1] * 255, 0, 4499, -500, 500));
         jointCoords[i].z = jointZ;
 
         if(jointY < 424 && jointX < 512 && jointX > 0 && jointY > 0){
@@ -242,10 +267,26 @@ function getDepthForJSON(jointCoords, pixels){
                     index = 2 * (y * RAWWIDTH + x);
                 }
 
-                var z = Math.round(map(pixels[index] + pixels[index + 1] * 255, 0, 4499, -500, 500));
+                var z = Math.round(map(depths[index] + depths[index + 1] * 255, 0, 4499, -500, 500));
 
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
-                    pArray.push({"x": x, "y": y, "z": z});
+                    var mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
+                    var mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
+                    var cIndex = 4 * (mappedY * COLWIDTH + mappedX);
+
+                    var r = Math.round(map(colors[cIndex], 0, 255, 0, 99));
+                    var g = Math.round(map(colors[cIndex + 1], 0, 255, 0, 99));
+                    var b = Math.round(map(colors[cIndex + 2], 0, 255, 0, 99));
+
+                    // var r = ("0" + colors[index]).slice(-3);
+                    // var g = ("0" + colors[index + 1]).slice(-3);
+                    // var b = ("0" + colors[index + 2]).slice(-3);
+
+                    var c = r * 10000 + g * 100 + b;
+                    //var c = r + g + b;
+                    //var c = colors[cIndex + 1] * 100000 + colors[cIndex + 2] * 1000 + colors[cIndex + 3];
+
+                    pArray.push({"x": x, "y": y, "z": z, "r": colors[cIndex], "g": colors[cIndex + 1], "b": colors[cIndex + 2], "c": c});
                 }
             }
 

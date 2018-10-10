@@ -101,6 +101,8 @@ Prep Kinect for live feed
  */
 var RAWWIDTH = 512;
 var RAWHEIGHT = 424;
+var COLWIDTH = 1920;
+var COLHEIGHT = 1080;
 
 var busy = false;
 
@@ -111,6 +113,7 @@ var bodyCount = 0;
 
 var jointCoords = [];
 var depthData = [];
+var colorData = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -128,6 +131,16 @@ function startSkeletonTracking() {
             busy = false;
         });
 
+        kinect.on('colorFrame', function (newPixelData) {
+            if (busy) {
+                return;
+            }
+            busy = true;
+
+            colorData = newPixelData;
+            busy = false;
+        });
+
         kinect.on('bodyFrame', function (bodyFrame) {
 
             var index = 0;
@@ -141,8 +154,7 @@ function startSkeletonTracking() {
                     jointCoords = calcJointCoords(body.joints);
 
                     if (!sendAllBodies) {
-                            var newJoints = [];
-                            getDepthForJSON(jointCoords, depthData);
+                            getDataForJSON(jointCoords, depthData, colorData);
 
                             newBody.push({
                                 "bodyIndex": body.bodyIndex,
