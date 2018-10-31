@@ -142,7 +142,6 @@ function startSkeletonTracking() {
 
             let index = 0;
             let newBody = [];
-
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {
