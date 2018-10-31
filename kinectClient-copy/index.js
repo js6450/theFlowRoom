@@ -119,6 +119,7 @@ var bodyCount = 0;
 var jointCoords = [];
 var depthData = [];
 var colorData = [];
+var bodyFrame = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -127,45 +128,35 @@ function startSkeletonTracking() {
     if (kinect.open()) {
         console.log('Kinect device is open');
 
-        kinect.on('rawDepthFrame', function (newPixelData) {
-            if (busy) {
+        //https://github.com/wouterverweirder/kinect2/blob/master/examples/point-cloud-colors-electron/index.html
+
+        kinect.on('multiSourceFrame', function(frame){
+
+            if(busy) {
                 return;
             }
             busy = true;
 
-            depthData = newPixelData;
+            //length = 434176
+            depthData = frame.rawDepth.buffer;
+            //length = 868352
+            colorData = frame.depthColor.buffer;
 
-         //   console.log("depthData length: " + depthData.length);
-
-            busy = false;
-        });
-
-        kinect.on('colorFrame', function (newPixelData) {
-            if (busy) {
-                return;
-            }
-            busy = true;
-
-            colorData = newPixelData;
-
-           // console.log("colorData length: " + colorData.length);
-
-            busy = false;
-        });
-
-        kinect.on('bodyFrame', function (bodyFrame) {
+            bodyFrame = frame.body.bodies;
 
             var index = 0;
             var newBody = [];
-            bodyFrame.bodies.forEach(function (body) {
-                if (body.tracked) {
+            if(bodyFrame.length > 0){
+                //console.log("there is body");
+                bodyFrame.forEach(function (body) {
+                    if (body.tracked) {
 
-                    //console.log((new Date()) + ' body tracked!!');
-                   // console.log((new Date()) + " body available: " + bodyAvailable);
+                        //console.log((new Date()) + ' body tracked!!');
+                        // console.log((new Date()) + " body available: " + bodyAvailable);
 
-                    jointCoords = calcJointCoords(body.joints);
+                        jointCoords = calcJointCoords(body.joints);
 
-                    if (!sendAllBodies) {
+                        if (!sendAllBodies) {
                             getDataForJSON(jointCoords, depthData, colorData);
 
                             newBody.push({
@@ -175,27 +166,31 @@ function startSkeletonTracking() {
                                 "rightHandState": body.rightHandState,
                                 "joints": jointCoords
                             });
+                        }
+                        index++;
                     }
-                    index++;
+                });
+
+                if(bodyCount != index){
+                    bodyCount = index;
+
+                    console.log("Total number of bodies detected: " + bodyCount);
                 }
-            });
 
-            if(bodyCount != index){
-                bodyCount = index;
-
-                console.log("Total number of bodies detected: " + bodyCount);
+                if(newBody != null){
+                    sendData(newBody);
+                }
             }
 
-            if(newBody != null){
-                sendData(newBody);
-            }
+
+            busy = false;
         });
-        kinect.openBodyReader();
+        kinect.openMultiSourceReader({
+            frameTypes: Kinect2.FrameType.rawDepth | Kinect2.FrameType.depthColor | Kinect2.FrameType.body
+        });
     }else{
         console.log('kinect is closed');
     }
-    kinect.openRawDepthReader();
-    kinect.openColorReader();
 }
 
 function stopSkeletonTracking() {
@@ -270,9 +265,9 @@ function getDataForJSON(jointCoords, depths, colors){
                 var z = Math.round(map(depths[index] + depths[index + 1] * 255, 0, 4499, -500, 500));
 
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
-                    var mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
-                    var mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
-                    var cIndex = 4 * (mappedY * COLWIDTH + mappedX);
+                    // var mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
+                    // var mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
+                    var cIndex = 4 * (y * RAWWIDTH + x);
 
                     var r = Math.round(map(colors[cIndex], 0, 255, 0, 99));
                     var g = Math.round(map(colors[cIndex + 1], 0, 255, 0, 99));

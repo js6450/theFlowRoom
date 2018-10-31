@@ -1,4 +1,4 @@
-var Kinect2, kinect;
+let Kinect2, kinect;
 
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
@@ -9,27 +9,32 @@ const socket = io(addr);
 const fs = require('fs');
 const util = require('util');
 
-var logName = new Date().toISOString().split('T')[0] + ".log";
+let saveLog = false;
 
-var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
-var log_stdout = process.stdout;
+let logName = new Date().toISOString().split('T')[0] + ".log";
+
+let log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+let log_stdout = process.stdout;
 
 console.log = function(d) { //
-    var timeStamp = new Date().toISOString();
+    let timeStamp = new Date().toISOString();
 
-    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    if(saveLog){
+        log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    }
+
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-var liveFeed = false;
-var saveFeed = false;
-var firstData = true;
+let liveFeed = true;
+let saveFeed = true;
+let firstData = true;
 
-var dataDest = "data/";
-var dataOrigin = "data/skeleton.json";
-var dataIndex = 0;
+let dataDest = "data/";
+let dataOrigin = "data/skeleton.json";
+let dataIndex = 0;
 
-var skeletonData = [];
+let skeletonData = [];
 
 function init(){
     if(liveFeed){
@@ -99,21 +104,20 @@ function setConnection(){
 /*
 Prep Kinect for live feed
  */
-var RAWWIDTH = 512;
-var RAWHEIGHT = 424;
-var COLWIDTH = 1920;
-var COLHEIGHT = 1080;
+let RAWWIDTH = 512;
+let RAWHEIGHT = 424;
 
-var busy = false;
+let busy = false;
 
-var sendAllBodies = false;
-var rawDepth = false;
+let sendAllBodies = false;
+let rawDepth = false;
 
-var bodyCount = 0;
+let bodyCount = 0;
 
-var jointCoords = [];
-var depthData = [];
-var colorData = [];
+let jointCoords = [];
+let depthData = [];
+let colorData = [];
+let bodyFrame = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -121,68 +125,69 @@ function startSkeletonTracking() {
 
     if (kinect.open()) {
         console.log('Kinect device is open');
-        kinect.on('rawDepthFrame', function (newPixelData) {
-            if (busy) {
+
+        kinect.on('multiSourceFrame', function(frame){
+
+            if(busy) {
                 return;
             }
             busy = true;
 
-            depthData = newPixelData;
-            busy = false;
-        });
+            //length = 434176
+            depthData = frame.rawDepth.buffer;
+            //length = 868352
+            colorData = frame.depthColor.buffer;
 
-        kinect.on('colorFrame', function (newPixelData) {
-            if (busy) {
-                return;
-            }
-            busy = true;
+            bodyFrame = frame.body.bodies;
 
-            colorData = newPixelData;
-            busy = false;
-        });
+            let index = 0;
+            let newBody = [];
 
-        kinect.on('bodyFrame', function (bodyFrame) {
+            if(bodyFrame.length > 0){
+                //console.log("there is body");
+                bodyFrame.forEach(function (body) {
+                    if (body.tracked) {
 
-            var index = 0;
-            var newBody = [];
-            bodyFrame.bodies.forEach(function (body) {
-                if (body.tracked) {
+                        //console.log((new Date()) + ' body tracked!!');
+                        // console.log((new Date()) + " body available: " + bodyAvailable);
 
-                    //console.log((new Date()) + ' body tracked!!');
-                   // console.log((new Date()) + " body available: " + bodyAvailable);
+                        jointCoords = calcJointCoords(body.joints);
 
-                    jointCoords = calcJointCoords(body.joints);
-
-                    if (!sendAllBodies) {
+                        if (!sendAllBodies) {
                             getDataForJSON(jointCoords, depthData, colorData);
 
                             newBody.push({
+                                "sid": socket.id,
                                 "bodyIndex": body.bodyIndex,
                                 "trackingId": body.trackingId,
                                 "leftHandState": body.leftHandState,
                                 "rightHandState": body.rightHandState,
                                 "joints": jointCoords
                             });
+                        }
+                        index++;
                     }
-                    index++;
+                });
+
+                if(bodyCount != index){
+                    bodyCount = index;
+
+                    console.log("Total number of bodies detected: " + bodyCount);
                 }
-            });
 
-            if(bodyCount != index){
-                bodyCount = index;
-
-                console.log("Total number of bodies detected: " + bodyCount);
+                if(newBody != null){
+                    sendData(newBody);
+                }
             }
 
-            if(newBody != null){
-                sendData(newBody);
-            }
+            busy = false;
         });
-        kinect.openBodyReader();
+        kinect.openMultiSourceReader({
+            frameTypes: Kinect2.FrameType.rawDepth | Kinect2.FrameType.depthColor | Kinect2.FrameType.body
+        });
     }else{
         console.log('kinect is closed');
     }
-    kinect.openRawDepthReader();
 }
 
 function stopSkeletonTracking() {
@@ -196,32 +201,32 @@ function stopSkeletonTracking() {
 }
 
 function calcJointCoords(joints){
-    var jointCoords = [];
+    let jointCoords = [];
 
-    for(var i = 0; i < joints.length - 4; i++){
-        var xpos = Math.floor(joints[i].depthX * RAWWIDTH);
-        var ypos = Math.floor(joints[i].depthY * RAWHEIGHT);
+    for(let i = 0; i < joints.length - 4; i++){
+        let xpos = Math.floor(joints[i].depthX * RAWWIDTH);
+        let ypos = Math.floor(joints[i].depthY * RAWHEIGHT);
         jointCoords.push({"x": xpos, "y": ypos});
     }
 
     return jointCoords;
 }
 
-function getDepthForJSON(jointCoords, pixels){
-    for(var i = 0; i < jointCoords.length; i++){
+function getDataForJSON(jointCoords, depths, colors){
+    for(let i = 0; i < jointCoords.length; i++){
 
-        var pArray = [];
+        let pArray = [];
 
-        var jointX = jointCoords[i].x;
-        var jointY = jointCoords[i].y;
+        let jointX = jointCoords[i].x;
+        let jointY = jointCoords[i].y;
 
-        var zIndex = 2 * (jointY * RAWWIDTH + jointX);
-        var jointZ = Math.round(map(pixels[zIndex] + pixels[zIndex + 1] * 255, 0, 4499, -500, 500));
+        let zIndex = 2 * (jointY * RAWWIDTH + jointX);
+        let jointZ = Math.round(map(depths[zIndex] + depths[zIndex + 1] * 255, 0, 4499, -500, 500));
         jointCoords[i].z = jointZ;
 
         if(jointY < 424 && jointX < 512 && jointX > 0 && jointY > 0){
-            var pnum = 30;
-            var dist;
+            let pnum = 30;
+            let dist;
 
             if(i == 1){
                 dist = 60;
@@ -244,9 +249,9 @@ function getDepthForJSON(jointCoords, pixels){
             }
 
             while(pArray.length < pnum){
-                var x = jointX + Math.floor(Math.random() * dist * 2) - dist;
-                var y = jointY + Math.floor(Math.random() * dist * 2) - dist;
-                var index = 2 * (y * RAWWIDTH + x);
+                let x = jointX + Math.floor(Math.random() * dist * 2) - dist;
+                let y = jointY + Math.floor(Math.random() * dist * 2) - dist;
+                let index = 2 * (y * RAWWIDTH + x);
 
                 while(index < 0 || index > 2 * 512 * 424){
                     x = jointX + Math.floor(Math.random() * dist * 2) - dist;
@@ -254,10 +259,25 @@ function getDepthForJSON(jointCoords, pixels){
                     index = 2 * (y * RAWWIDTH + x);
                 }
 
-                var z = Math.round(map(pixels[index] + pixels[index + 1] * 255, 0, 4499, -500, 500));
+                let z = Math.round(map(depths[index] + depths[index + 1] * 255, 0, 4499, -500, 500));
 
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
-                    pArray.push({"x": x, "y": y, "z": z});
+                    // let mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
+                    // let mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
+                    let cIndex = 4 * (y * RAWWIDTH + x);
+
+                    let rVal = ("0" + Math.round(map(colors[cIndex], 0, 255, 0, 99))).slice(-2);
+                    let gVal = ("0" + Math.round(map(colors[cIndex + 1], 0, 255, 0, 99))).slice(-2);
+                    let bVal = ("0" + Math.round(map(colors[cIndex + 2], 0, 255, 0, 99))).slice(-2);
+
+                    // let r = ("0" + colors[index]).slice(-3);
+                    // let g = ("0" + colors[index + 1]).slice(-3);
+                    // let b = ("0" + colors[index + 2]).slice(-3);
+
+                    let c = rVal + gVal + bVal;
+
+                    //"rawC": [colors[cIndex], colors[cIndex + 1], colors[cIndex + 2]],
+                    pArray.push({"x": x, "y": y, "z": z, "c": c});
                 }
             }
 
@@ -273,7 +293,7 @@ function map (num, in_min, in_max, out_min, out_max) {
 
 function sendData(newBody){
   //  console.log((new Date()) + " sending new data");
-    var data = JSON.stringify(newBody);
+    let data = JSON.stringify(newBody);
     socket.emit('message', data);
 
     if(saveFeed && data != "[]"){
@@ -299,7 +319,7 @@ Prep data for sending saved JSON data
 function sendSavedData(){
     if(socket.connected){
         //console.log(dataIndex);
-        var currentData = JSON.stringify(skeletonData[dataIndex]);
+        let currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
         dataIndex++;

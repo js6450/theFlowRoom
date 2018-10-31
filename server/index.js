@@ -6,6 +6,8 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
+var debug = true;
+
 var logName = new Date().toISOString().split('T')[0] + ".log";
 
 var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
@@ -14,8 +16,13 @@ var log_stdout = process.stdout;
 console.log = function(d) { //
     var timeStamp = new Date().toISOString();
 
-    log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    if(debug){
+        log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    }
+
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
+
+
 };
 
 var kinectCount = 0;
@@ -75,8 +82,15 @@ io.on('connection', function(socket){
 
         if(socket.userType == 0){
             kinectData[socket.kinectIndex] = data;
-        }
 
+            // if(debug){
+            //     fs.writeFile(dest, data, 'utf8', function(err){
+            //         if(err){
+            //             return console.log(err);
+            //         }
+            //     });
+            // }
+        }
     });
 
     socket.on('sendLog', function(data){
@@ -89,9 +103,9 @@ io.on('connection', function(socket){
         if(socket.userType == 0){
             kinectData.splice(socket.kinectIndex, 1);
             kinectCount--;
-
-            console.log("Current number of kinect clients connected: " + kinectCount);
         }
+
+       console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
     });
 
 });

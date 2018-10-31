@@ -1,13 +1,33 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 
 const app = express();
+
+const fs = require('fs');
+const util = require('util');
+
+var debug = false;
+
+var logName = new Date().toISOString().split('T')[0] + ".log";
+
+var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+    var timeStamp = new Date().toISOString();
+
+    if(debug){
+        log_file.write(util.format(timeStamp + ": " + d) + '\n');
+    }
+
+    log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
+
+
+};
 
 var kinectCount = 0;
 var kinectData = [];
 
-var debug = true;
 
 app.set("views", __dirname + "/views");
 app.engine(".html", require('ejs').__express);
@@ -21,8 +41,6 @@ const socketHTTP = http.Server(app);
 
 const io = require('socket.io')(socketHTTP);
 const port = process.env.PORT || 8000;
-
-const dest = __dirname + "/public/data.json";
 
 socketHTTP.listen(port, () => console.log('listening on port ' + port));
 
@@ -39,10 +57,6 @@ io.on('connection', function(socket){
                 socket.emit('sendData', kinectData);
             }
 
-            // fs.readFile(dest, 'utf8', function(err, data){
-            //     socket.emit('sendData', data);
-            // });
-
             setTimeout(broadcastData, 50);
         }
     }
@@ -54,41 +68,35 @@ io.on('connection', function(socket){
         //status 1: client connection
         socket.userType = data;
 
+        console.log("User of type " + socket.userType + " with id " + socket.id + " connected");
+
         if(socket.userType == 0){
             socket.kinectIndex = kinectCount;
-
             kinectCount++;
+
+            console.log("Current number of kinect clients connected: " + kinectCount);
         }
 
-        console.log("User of type " + socket.userType + " with id " + socket.id + " connected");
     });
 
     socket.on('message', function(data){
 
         if(socket.userType == 0){
-
-            // var currentKinect = socket.kinectIndex;
-           // var nextKinect = currentKinect + 1;
-            //
-            // kinectData = {currentKinect: data};
-            // kinectData = {nextKinect: data};
-
             kinectData[socket.kinectIndex] = data;
-           // kinectData[currentKinect + 1] = data;
-
-            if(debug){
-                fs.writeFile(dest, data, 'utf8', function(err){
-                    if(err){
-                        return console.log(err);
-                    }
-                });
-            }
+            //
         }
     });
 
+    socket.on('sendLog', function(data){
+        console.log(data);
+    });
+
     socket.on('disconnect', function(){
+        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
+
         if(socket.userType == 0){
-            kinectData.splice(socket.kinectIndex);
+            kinectData.splice(socket.kinectIndex, 1);
+            kinectCount--;
         }
 
        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
