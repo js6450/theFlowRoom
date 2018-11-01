@@ -26,8 +26,8 @@ console.log = function(d) { //
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-let liveFeed = true;
-let saveFeed = true;
+let liveFeed = false;
+let saveFeed = false;
 let firstData = true;
 
 let dataDest = "data/";
@@ -142,6 +142,7 @@ function startSkeletonTracking() {
 
             let index = 0;
             let newBody = [];
+
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {

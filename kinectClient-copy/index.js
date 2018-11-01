@@ -26,7 +26,7 @@ console.log = function(d) {
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-var liveFeed = true;
+var liveFeed = false;
 var saveFeed = false;
 var firstData = true;
 
