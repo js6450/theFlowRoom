@@ -4,8 +4,9 @@ class Body {
     this.position;
     this.scale;
     this.joints;
+    this.lights = [];
+    this.color;
 
-    //this.lights = [];
     //this.pointCloud;
     //this.pointsMax = [];
     //this.lines = [];

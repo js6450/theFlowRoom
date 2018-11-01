@@ -8,7 +8,8 @@ const MODE_TEST = false;
 
 const JSON_PATH = 'json/skeletons.json';
 
-const FLOW_PARTICLES_SPACING = 80;
+const FLOW_PARTICLES_SPACING = 100;
+const FLOOR_PARTICLES_SPACING = 80;
 
 const WORLD_WIDTH = 1600;
 const WORLD_HEIGHT = FLOW_PARTICLES_SPACING * 10;
@@ -19,14 +20,17 @@ const BODY_PARTICLES_MAX = 610; // TODO: improve this.
 const DEPTH_SCALING = -1.0;
 
 const BODY_POS_OFFSET_X = -(512 * 0.5);
-const BODY_POS_OFFSET_Y = 0; //424;
+const BODY_POS_OFFSET_Y = -(424 * 0.5);
+// const BODY_POS_OFFSET_Z = -(500 * 0.5);
 
 const MAX_OF_BODIES = 5;
 const BODY_EFFECT_PARTICLES_MAX = BODY_PARTICLES_MAX * MAX_OF_BODIES * 2;
 
-// const FLOW_PARTICLES_MAX = (WORLD_WIDTH/FLOW_PARTICLES_SPACING) * (WORLD_HEIGHT/FLOW_PARTICLES_SPACING) * (WORLD_DEPTH/FLOW_PARTICLES_SPACING);
-const FLOW_PARTICLES_MAX = (WORLD_WIDTH/FLOW_PARTICLES_SPACING) * (WORLD_DEPTH/FLOW_PARTICLES_SPACING);
+const FLOW_PARTICLES_MAX = (WORLD_WIDTH/FLOW_PARTICLES_SPACING) * (WORLD_HEIGHT/FLOW_PARTICLES_SPACING) * (WORLD_DEPTH/FLOW_PARTICLES_SPACING);
+const FLOOR_PARTICLES_MAX = (WORLD_WIDTH/FLOOR_PARTICLES_SPACING) * (WORLD_DEPTH/FLOOR_PARTICLES_SPACING);
+
 console.log("! Flow Particles: " + FLOW_PARTICLES_MAX);
+console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
 
 
 var socket = io();
@@ -45,30 +49,33 @@ var frameCount = 0;
 var time = 0;
 
 
-// Particle Buffers
-var flowMeshes = [];
+
+var flow = [];
+var floorMeshes = [];
+
+// BODIES
+var bodies = [];
 
 // TEXTURES
-var flowTexture, bodyTexture;
+var flowTexture, floorTexture, bodyTexture;
 
 // MATERIALS
+var flowParticleMaterial;
 var shaderMaterial;
+
+// BODY POINT CLOUD
+var instanceObjs;
+var instanceIndex = 0;
+var instanceOffsetAttribute;
+var instanceColorAttribute;
+var instanceLastTimeAttribute;
+var instanceScaleAttribute;
 
 
 // TEST
 var curveLine;
 var curveExtrude;
 var extrudeShape;
-
-var instanceObjs;
-var instanceIndex = 0;
-var instanceOffsetAttribute;
-var instanceLastTimeAttribute;
-
-
-
-// BODIES
-var bodies = [];
 
 
 // JSON Data
@@ -114,7 +121,6 @@ function preload() {
 	loadJSON(function(response) {
 		// Parse JSON string into object
 		bodyDataJSON = JSON.parse(response);
-		console.log( bodyDataJSON );
 
 		// load shader
 		preloadShaders();
@@ -128,6 +134,8 @@ function preloadShaders() {
 	sl.loadShaders({
 		particle_vert : "",
 		particle_frag : "",
+		flowParticle_vert : "",
+		flowParticle_frag : "",
 		instance_vert : "",
 		instance_frag : "",
 	}, "glsl/", init );
@@ -157,10 +165,10 @@ function init() {
 
 	// TEXTURES
 
-	let floorTexture = textureLoader.load( "img/texture_flow.jpg" );
-	floorTexture.wrapS = THREE.MirroredRepeatWrapping;
-	floorTexture.wrapT = THREE.MirroredRepeatWrapping;
-	floorTexture.repeat.set( 64, 64 );
+	floorTexture = textureLoader.load( "img/texture_dots.jpg" );
+	floorTexture.wrapS = THREE.RepeatWrapping;
+	floorTexture.wrapT = THREE.RepeatWrapping;
+	floorTexture.repeat.set( 6, 6 );
 
 	flowTexture = textureLoader.load( "img/texture_dots.jpg" );
 	flowTexture.wrapS = THREE.RepeatWrapping; //MirroredRepeatWrapping;
@@ -199,8 +207,8 @@ function init() {
 
 	// CAMERA
 
-	camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 30, 5000 );
-	camera.position.z = 2500;
+	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 10, 20000 );
+	camera.position.z = 1500;
 
 
 
@@ -236,13 +244,34 @@ function init() {
 	helper.material.color.setHex( 0x080808 );
 	helper.material.blending = THREE.AdditiveBlending;
 	helper.material.transparent = true;
-	scene.add( helper );
+	//scene.add( helper );
 
 
 
 	// THREE OBJECTS
 
+
+	// ambient lighting
+	let ambiColor = "#000309";
+	let ambientLight = new THREE.AmbientLight(ambiColor);
+	scene.add(ambientLight);
+
+	// point lighting
+	let pointColor = "#2711ca";
+	pointLight = new THREE.PointLight(pointColor);
+	pointLight.distance = 1000;
+	scene.add(pointLight);
+
+	// point lighting2
+	// let color = "#ffffff";
+	// let light1 = new THREE.PointLight(color);
+	// light1.distance = 100000;
+	// light1.position.y = 1000;
+	// scene.add(light1);
+
+
 	// Ground plane
+	/*
 	let planeGeometry = new THREE.PlaneGeometry(WORLD_WIDTH*20, WORLD_DEPTH*20, 100, 100);
 
 
@@ -273,37 +302,13 @@ function init() {
 	plane.position.y = -WORLD_HEIGHT/2;
 	plane.position.z = 0;
 	scene.add(plane);
+	*/
 
-	// ambient lighting
-	let ambiColor = "#000011";
-	let ambientLight = new THREE.AmbientLight(ambiColor);
-	scene.add(ambientLight);
-
-	// point lighting
-	let pointColor = "#2711ca";
-	pointLight = new THREE.PointLight(pointColor);
-	pointLight.distance = 1000;
-	scene.add(pointLight);
-
-	// point lighting2
-	let color = "#ffffff";
-	let light1 = new THREE.PointLight(color);
-	light1.distance = 100000;
-	light1.position.y = 1000;
-	scene.add(light1);
 
 
 	// FLOW
 	createFlow();
-
-
-	// BODY
-	// TODO: This should be revised when getting real-time data
-	for ( let bodyIndex = 0; bodyIndex < bodyDataJSON[currentFrame].length; bodyIndex ++) {
-		// createBody( bodyDataJSON[currentFrame][bodyIndex] );
-	}
-
-
+	createFloor();
 	// BODY POINT CLOUD
 	createBodyPointCloud();
 
@@ -333,14 +338,15 @@ function animate() {
 
 function render() {
 
-	updateFlow();
 	updateBodies();
+	updateFlow();
+	updateFloor();
 
 	// LIGHT MOVEMENT
 
-	//pointLight.position.x = centerX;
-	//pointLight.position.y = centerY;
-	//pointLight.position.z = centerZ;
+	pointLight.position.x = Math.cos(time * 0.001) * 500;
+	pointLight.position.y = 0;
+	pointLight.position.z = Math.sin(time * 0.001) * 500;
 
 	renderer.render( scene, camera );
 }
@@ -371,5 +377,6 @@ function onSendData(data){
 			newData[i] = JSON.parse(data[i]);
 		}
 	}
+	// console.log( newData[0] );
 
 }
