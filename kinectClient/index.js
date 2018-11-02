@@ -26,12 +26,12 @@ console.log = function(d) { //
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-let liveFeed = false;
+let liveFeed = true;
 let saveFeed = false;
 let firstData = true;
 
 let dataDest = "data/";
-let dataOrigin = "data/skeleton.json";
+let dataOrigin = "data/1031-02.json";
 let dataIndex = 0;
 
 let skeletonData = [];

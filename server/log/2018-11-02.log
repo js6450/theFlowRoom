@@ -1,0 +1,96 @@
+2018-11-02T00:31:02.350Z: listening on port 8000
+2018-11-02T00:31:17.881Z: User of type 0 with id d7t9E5GY0EHW6d0vAAAA connected
+2018-11-02T00:31:17.882Z: Current number of kinect clients connected: 1
+2018-11-02T00:31:20.325Z: User of type 0 with id d7t9E5GY0EHW6d0vAAAA disconnected
+2018-11-02T00:31:20.326Z: User of type 0 with id d7t9E5GY0EHW6d0vAAAA disconnected
+2018-11-02T00:31:43.486Z: User of type 0 with id JNt0C3OeOzHfphbbAAAB connected
+2018-11-02T00:31:43.488Z: Current number of kinect clients connected: 1
+2018-11-02T00:31:51.060Z: User of type 1 with id qwIiUZoLsrin0NWRAAAC connected
+2018-11-02T00:32:50.043Z: User of type 0 with id JNt0C3OeOzHfphbbAAAB disconnected
+2018-11-02T00:32:50.044Z: User of type 0 with id JNt0C3OeOzHfphbbAAAB disconnected
+2018-11-02T00:35:59.323Z: listening on port 8000
+2018-11-02T00:35:59.824Z: Web Client - current number of kinects received: 0
+2018-11-02T00:36:00.460Z: User of type 0 with id NOBg67wlVUAzGxg1AAAB connected
+2018-11-02T00:36:00.461Z: Current number of kinect clients connected: 1
+2018-11-02T00:36:00.471Z: Web Client - current number of kinects received: 1
+2018-11-02T00:36:04.623Z: User of type undefined with id -4IDETAZ7049lxmdAAAA disconnected
+2018-11-02T00:36:04.630Z: User of type undefined with id -4IDETAZ7049lxmdAAAA disconnected
+2018-11-02T00:36:05.316Z: User of type 1 with id gHsY0JVads7ZBqQSAAAC connected
+2018-11-02T00:38:22.611Z: listening on port 8000
+2018-11-02T00:38:22.680Z: Web Client - current number of kinects received: 0
+2018-11-02T00:38:23.635Z: User of type 0 with id csXYz-nK4WtNk7EqAAAB connected
+2018-11-02T00:38:23.637Z: Current number of kinect clients connected: 1
+2018-11-02T00:38:23.728Z: Web Client - current number of kinects received: 1
+2018-11-02T00:38:24.712Z: User of type undefined with id QteztaEg0ZeHDfLdAAAA disconnected
+2018-11-02T00:38:24.717Z: User of type undefined with id QteztaEg0ZeHDfLdAAAA disconnected
+2018-11-02T00:38:25.494Z: User of type 1 with id JsXzjwIofm-YkkKKAAAC connected
+2018-11-02T00:51:15.416Z: listening on port 8000
+2018-11-02T00:51:15.468Z: Web Client - current number of kinects received: 0
+2018-11-02T00:51:16.477Z: User of type 0 with id BdOWFyYUxf3xOuQHAAAB connected
+2018-11-02T00:51:16.478Z: Current number of kinect clients connected: 1
+2018-11-02T00:51:16.569Z: Web Client - current number of kinects received: 1
+2018-11-02T00:51:19.047Z: User of type undefined with id 6cukMmc9E9D2jUZ3AAAA disconnected
+2018-11-02T00:51:19.054Z: User of type undefined with id 6cukMmc9E9D2jUZ3AAAA disconnected
+2018-11-02T00:51:19.916Z: User of type 1 with id p5zbEDSmb0j3RgxaAAAC connected
+2018-11-02T00:53:13.918Z: User of type 0 with id BdOWFyYUxf3xOuQHAAAB disconnected
+2018-11-02T00:53:13.919Z: User of type 0 with id BdOWFyYUxf3xOuQHAAAB disconnected
+2018-11-02T00:53:15.509Z: User of type 0 with id uSjE1pmxbsyMAmPFAAAD connected
+2018-11-02T00:53:15.512Z: Current number of kinect clients connected: 1
+2018-11-02T00:53:18.997Z: User of type 1 with id p5zbEDSmb0j3RgxaAAAC disconnected
+2018-11-02T00:53:18.998Z: User of type 1 with id p5zbEDSmb0j3RgxaAAAC disconnected
+2018-11-02T00:53:19.621Z: User of type 1 with id r1P0cyt01HByqDssAAAE connected
+2018-11-02T00:54:21.168Z: User of type 0 with id uSjE1pmxbsyMAmPFAAAD disconnected
+2018-11-02T00:54:21.173Z: User of type 0 with id uSjE1pmxbsyMAmPFAAAD disconnected
+2018-11-02T00:54:22.754Z: User of type 0 with id kMYh9HAnB8obq1a8AAAF connected
+2018-11-02T00:54:22.754Z: Current number of kinect clients connected: 1
+2018-11-02T00:54:23.416Z: User of type 0 with id kMYh9HAnB8obq1a8AAAF disconnected
+2018-11-02T00:54:23.417Z: User of type 0 with id kMYh9HAnB8obq1a8AAAF disconnected
+2018-11-02T00:54:26.532Z: User of type 0 with id CGTR82PrGbwdKoT4AAAG connected
+2018-11-02T00:54:26.533Z: Current number of kinect clients connected: 1
+2018-11-02T00:54:29.919Z: listening on port 8000
+2018-11-02T00:54:30.101Z: User of type 0 with id 1ZwbXUfOw5bLe32sAAAB connected
+2018-11-02T00:54:30.104Z: Current number of kinect clients connected: 1
+2018-11-02T00:54:32.422Z: User of type undefined with id wYLdBw5cD8j-KK-nAAAA disconnected
+2018-11-02T00:54:32.423Z: User of type undefined with id wYLdBw5cD8j-KK-nAAAA disconnected
+2018-11-02T00:54:33.037Z: User of type 1 with id vC4TJwnyS9XVc-TVAAAC connected
+2018-11-02T00:55:17.465Z: User of type 0 with id 1ZwbXUfOw5bLe32sAAAB disconnected
+2018-11-02T00:55:17.466Z: User of type 0 with id 1ZwbXUfOw5bLe32sAAAB disconnected
+2018-11-02T00:55:23.199Z: User of type 0 with id STsCtXyEROk_NX4MAAAD connected
+2018-11-02T00:55:23.202Z: Current number of kinect clients connected: 1
+2018-11-02T00:55:25.934Z: User of type 1 with id vC4TJwnyS9XVc-TVAAAC disconnected
+2018-11-02T00:55:25.935Z: User of type 1 with id vC4TJwnyS9XVc-TVAAAC disconnected
+2018-11-02T00:55:26.503Z: User of type 1 with id Vjy9sZHLxhg_ojsLAAAE connected
+2018-11-02T01:05:01.753Z: listening on port 8000
+2018-11-02T01:05:04.640Z: User of type undefined with id 1uXuOKUIktONm7tyAAAA disconnected
+2018-11-02T01:05:04.640Z: User of type undefined with id 1uXuOKUIktONm7tyAAAA disconnected
+2018-11-02T01:05:05.230Z: User of type 1 with id zkqBFWkq6QzX-ug6AAAB connected
+2018-11-02T01:05:33.879Z: listening on port 8000
+2018-11-02T01:05:37.115Z: User of type 0 with id u5fHBdWnFUSk6i-tAAAB connected
+2018-11-02T01:05:37.117Z: Current number of kinect clients connected: 1
+2018-11-02T01:05:40.239Z: User of type undefined with id KuBCRbUXL8VR7aVfAAAA disconnected
+2018-11-02T01:05:40.240Z: User of type undefined with id KuBCRbUXL8VR7aVfAAAA disconnected
+2018-11-02T01:05:40.869Z: User of type 1 with id eHC3XYfiWBTDrA-4AAAC connected
+2018-11-02T01:07:09.990Z: User of type 1 with id eHC3XYfiWBTDrA-4AAAC disconnected
+2018-11-02T01:07:09.992Z: User of type 1 with id eHC3XYfiWBTDrA-4AAAC disconnected
+2018-11-02T01:07:10.629Z: User of type 1 with id z1IEAZPJxc0a-AGtAAAD connected
+2018-11-02T01:08:35.141Z: listening on port 8000
+2018-11-02T01:08:41.622Z: User of type 1 with id Zx6_S7E98c34O7pLAAAB connected
+2018-11-02T01:08:47.554Z: User of type 1 with id Zx6_S7E98c34O7pLAAAB disconnected
+2018-11-02T01:08:47.556Z: User of type 1 with id Zx6_S7E98c34O7pLAAAB disconnected
+2018-11-02T01:08:48.247Z: User of type 1 with id 1NtJjfqt3WiUe-MsAAAC connected
+2018-11-02T01:08:50.177Z: User of type 1 with id 1NtJjfqt3WiUe-MsAAAC disconnected
+2018-11-02T01:08:50.178Z: User of type 1 with id 1NtJjfqt3WiUe-MsAAAC disconnected
+2018-11-02T01:08:50.715Z: User of type 1 with id JvVzB-1ToMyPVhiLAAAD connected
+2018-11-02T01:09:09.607Z: listening on port 8000
+2018-11-02T01:09:16.565Z: User of type 0 with id 86W2cKdpIUitRrbQAAAB connected
+2018-11-02T01:09:16.570Z: Current number of kinect clients connected: 1
+2018-11-02T01:09:37.481Z: User of type undefined with id rNm2dmSXTSB3SOhBAAAA disconnected
+2018-11-02T01:09:37.483Z: User of type undefined with id rNm2dmSXTSB3SOhBAAAA disconnected
+2018-11-02T01:09:38.089Z: User of type 1 with id h-6N-32JYp8PUggYAAAC connected
+2018-11-02T01:11:09.408Z: User of type 0 with id 86W2cKdpIUitRrbQAAAB disconnected
+2018-11-02T01:11:09.409Z: User of type 0 with id 86W2cKdpIUitRrbQAAAB disconnected
+2018-11-02T01:11:23.369Z: User of type 0 with id _ImsalkKFamytwebAAAD connected
+2018-11-02T01:11:23.370Z: Current number of kinect clients connected: 1
+2018-11-02T01:11:27.225Z: User of type 1 with id h-6N-32JYp8PUggYAAAC disconnected
+2018-11-02T01:11:27.228Z: User of type 1 with id h-6N-32JYp8PUggYAAAC disconnected
+2018-11-02T01:11:27.853Z: User of type 1 with id RZLosN7PkFsrlHZMAAAE connected

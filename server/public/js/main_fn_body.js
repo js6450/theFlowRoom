@@ -377,10 +377,12 @@ function updateBodies() {
 					for ( let pxIndex = 0; pxIndex < skeleton.joints[i].px.length; pxIndex ++ ) {
 						// let index = prevPxIndex + pxIndex;
 
+						//console.log( skeleton.joints[i].px[pxIndex].c);
+
 						// remove error pixels (px.z range: -500 ~ 500)
-						let r = skeleton.joints[i].px[pxIndex].r * 0.01;
-						let g = skeleton.joints[i].px[pxIndex].g * 0.01;
-						let b = skeleton.joints[i].px[pxIndex].b * 0.01;
+						let r = skeleton.joints[i].px[pxIndex].c.substring(0, 2) * 0.01;
+						let g = skeleton.joints[i].px[pxIndex].c.substring(2, 4) * 0.01;
+						let b = skeleton.joints[i].px[pxIndex].c.substring(4, 6) * 0.01;
 
 						if (skeleton.joints[i].px[pxIndex].z == -500) continue;
 						if (r+g+b > 2.995) continue;
