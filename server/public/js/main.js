@@ -4,10 +4,6 @@
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 
-const MODE_TEST = false;
-
-const JSON_PATH = 'json/skeletons.json';
-
 const FLOW_PARTICLES_SPACING = 100;
 const FLOOR_PARTICLES_SPACING = 80;
 
@@ -80,9 +76,7 @@ var extrudeShape;
 
 // JSON Data
 var newData = [];
-var bodyData = [];
-var bodyDataJSON = [];
-var currentFrame = 0;
+var bodyDataObjs = [];
 
 
 // lights
@@ -118,13 +112,13 @@ window.onload = function() {
 
 
 function preload() {
-	loadJSON(function(response) {
-		// Parse JSON string into object
-		bodyDataJSON = JSON.parse(response);
+	preloadShaders();
 
-		// load shader
-		preloadShaders();
-	});
+	// loadJSON(function(response) {
+	// 	// Parse JSON string into object
+	// 	bodyDataJSON = JSON.parse(response);
+	// 	// load others
+	// });
 }
 
 
@@ -147,10 +141,8 @@ function preloadShaders() {
 function init() {
 
 	// SOCKET
-	if ( !MODE_TEST ) {
-		socket.emit('status', 1);
-		socket.on('sendData', onSendData);
-	}
+	socket.emit('status', 1);
+	socket.on('sendData', onSendData);
 
 
 
@@ -338,6 +330,7 @@ function animate() {
 
 function render() {
 
+	updateBodyData();
 	updateBodies();
 	updateFlow();
 	updateFloor();
@@ -372,7 +365,6 @@ function onWindowResize() {
 function onSendData(data){
 
 	if ( data != null ){
-		//bodyData = JSON.parse( data );
 		for ( let i = 0 ; i < data.length; i++) {
 			newData[i] = JSON.parse(data[i]);
 		}

@@ -26,12 +26,12 @@ console.log = function(d) { //
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-let liveFeed = true;
+let liveFeed = false;
 let saveFeed = false;
 let firstData = true;
 
 let dataDest = "data/";
-let dataOrigin = "data/1031-02.json";
+let dataOrigin = "data/nov02-one-long-02.json";
 let dataIndex = 0;
 
 let skeletonData = [];
@@ -62,9 +62,10 @@ socket.on('connect', function(socket){
     if(liveFeed){
         startSkeletonTracking();
     }else{
-        console.log('Reading saved data');
+        console.log('Reading saved data in ' + dataOrigin);
 
         fs.readFile(dataOrigin, 'utf8', function(err, data){
+            console.log("start parsing");
             skeletonData = JSON.parse(data);
             console.log("Total data length: " + skeletonData.length);
         });

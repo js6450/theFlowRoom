@@ -184,27 +184,16 @@
 2018-09-24T19:01:04.976Z: Total number of bodies detected: 1
 2018-09-24T19:01:05.074Z: Total number of bodies detected: 2
 2018-09-24T19:01:05.407Z: Total number of bodies detected: 3
-2018-09-24T19:07:40.052Z: Saved Data Mode
-2018-09-24T19:07:40.068Z: Connection made to http://localhost:8000
-2018-09-24T19:07:40.071Z: Reading saved data
-2018-09-24T19:07:40.221Z: Total data length: 397
-2018-09-24T19:13:42.605Z: Socket with undefined disconnected
-2018-09-24T19:15:39.984Z: Saved Data Mode
-2018-09-24T19:15:40.006Z: Connection made to http://localhost:8000
-2018-09-24T19:15:40.008Z: Reading saved data
-2018-09-24T19:15:40.188Z: Total data length: 397
-2018-09-24T19:15:44.599Z: Saved Data Mode
-2018-09-24T19:15:44.612Z: Connection made to http://localhost:8000
-2018-09-24T19:15:44.615Z: Reading saved data
-2018-09-24T19:15:44.766Z: Total data length: 397
-2018-09-24T19:16:25.061Z: Socket with undefined disconnected
-2018-09-24T19:16:25.067Z: Socket with undefined disconnected
-2018-09-24T19:35:37.957Z: Saved Data Mode
-2018-09-24T19:35:49.159Z: Connection made to http://localhost:8000
-2018-09-24T19:35:49.161Z: Reading saved data
-2018-09-24T19:35:49.351Z: Total data length: 397
-2018-09-24T20:11:50.195Z: Saved Data Mode
-2018-09-24T20:11:50.207Z: Connection made to http://localhost:8000
-2018-09-24T20:11:50.209Z: Reading saved data
-2018-09-24T20:11:50.395Z: Total data length: 397
+2018-09-24T19:33:28.216Z: Saved Data Mode
+2018-09-24T19:35:47.567Z: Connection made to http://localhost:8000
+2018-09-24T19:35:47.569Z: Reading saved data
+2018-09-24T19:35:48.005Z: Total data length: 423
+2018-09-24T20:11:47.468Z: Saved Data Mode
+2018-09-24T20:11:47.488Z: Connection made to http://localhost:8000
+2018-09-24T20:11:47.490Z: Reading saved data
+2018-09-24T20:11:47.936Z: Total data length: 423
 2018-09-24T20:12:18.404Z: Socket with undefined disconnected
+2018-09-24T20:23:47.201Z: Live Mode: Kinect connection made
+2018-09-24T20:23:47.227Z: Connection made to http://128.122.151.57:8000
+2018-09-24T20:23:47.230Z: Starting skeleton tracking
+2018-09-24T20:23:47.235Z: Kinect device is open
