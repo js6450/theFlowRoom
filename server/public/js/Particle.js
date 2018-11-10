@@ -61,7 +61,7 @@ class Particle {
 
 
 
-// BODY PARTICLE 
+// BODY PARTICLE
 
 class BodyParticle extends Particle {
   constructor( x, y, z, m ) {
@@ -109,7 +109,7 @@ class FlowParticle extends Particle {
     let distSq = this.pos.distanceToSquared( this.origin );
     let d = THREE.Math.mapLinear( distSq, 0, 2000, 1.0, 0.0 );
     d = THREE.Math.clamp(d, 0, 1.0);
-    
+
     // this.color = new THREE.Color( 1.0, 1.0, 1.0 );
     // this.color = new THREE.Color( w*0.2, w*0.5, w );
     this.color = new THREE.Color( w*d * 0.2, w*d * 0.5, w*d );
@@ -138,11 +138,3 @@ class ParticleBuffer {
     return vec3s;
   }
 }
-
-
-
-
-
-
-
-

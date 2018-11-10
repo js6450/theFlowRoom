@@ -1,23 +1,23 @@
-var Kinect2, kinect;
+let Kinect2, kinect;
 
 const io = require('socket.io-client');
 //const socket = io('https://theflowroom-server.herokuapp.com/');
 const addr = 'http://localhost:8000';
-//const addr = "http://128.122.151.58:8000"
+//const addr = "http://128.122.151.57:8000"
 const socket = io(addr);
 
 const fs = require('fs');
 const util = require('util');
 
-var saveLog = false;
+let saveLog = false;
 
-var logName = new Date().toISOString().split('T')[0] + ".log";
+let logName = new Date().toISOString().split('T')[0] + ".log";
 
-var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
-var log_stdout = process.stdout;
+let log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+let log_stdout = process.stdout;
 
-console.log = function(d) {
-    var timeStamp = new Date().toISOString();
+console.log = function(d) { //
+    let timeStamp = new Date().toISOString();
 
     if(saveLog){
         log_file.write(util.format(timeStamp + ": " + d) + '\n');
@@ -26,15 +26,15 @@ console.log = function(d) {
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-var liveFeed = true;
-var saveFeed = false;
-var firstData = true;
+let liveFeed = false;
+let saveFeed = false;
+let firstData = true;
 
-var dataDest = "data/";
-var dataOrigin = "data/1009-color.json";
-var dataIndex = 0;
+let dataDest = "data/";
+let dataOrigin = "data/nov02-one-long-01.json";
+let dataIndex = 0;
 
-var skeletonData = [];
+let skeletonData = [];
 
 function init(){
     if(liveFeed){
@@ -62,9 +62,10 @@ socket.on('connect', function(socket){
     if(liveFeed){
         startSkeletonTracking();
     }else{
-        console.log('Reading saved data');
+        console.log('Reading saved data in ' + dataOrigin);
 
         fs.readFile(dataOrigin, 'utf8', function(err, data){
+            console.log("start parsing");
             skeletonData = JSON.parse(data);
             console.log("Total data length: " + skeletonData.length);
         });
@@ -104,20 +105,20 @@ function setConnection(){
 /*
 Prep Kinect for live feed
  */
-var RAWWIDTH = 512;
-var RAWHEIGHT = 424;
+let RAWWIDTH = 512;
+let RAWHEIGHT = 424;
 
-var busy = false;
+let busy = false;
 
-var sendAllBodies = false;
-var rawDepth = false;
+let sendAllBodies = false;
+let rawDepth = false;
 
-var bodyCount = 0;
+let bodyCount = 0;
 
-var jointCoords = [];
-var depthData = [];
-var colorData = [];
-var bodyFrame = [];
+let jointCoords = [];
+let depthData = [];
+let colorData = [];
+let bodyFrame = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -125,8 +126,6 @@ function startSkeletonTracking() {
 
     if (kinect.open()) {
         console.log('Kinect device is open');
-
-        //https://github.com/wouterverweirder/kinect2/blob/master/examples/point-cloud-colors-electron/index.html
 
         kinect.on('multiSourceFrame', function(frame){
 
@@ -142,8 +141,9 @@ function startSkeletonTracking() {
 
             bodyFrame = frame.body.bodies;
 
-            var index = 0;
-            var newBody = [];
+            let index = 0;
+            let newBody = [];
+
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {
@@ -202,11 +202,11 @@ function stopSkeletonTracking() {
 }
 
 function calcJointCoords(joints){
-    var jointCoords = [];
+    let jointCoords = [];
 
-    for(var i = 0; i < joints.length - 4; i++){
-        var xpos = Math.floor(joints[i].depthX * RAWWIDTH);
-        var ypos = Math.floor(joints[i].depthY * RAWHEIGHT);
+    for(let i = 0; i < joints.length - 4; i++){
+        let xpos = Math.floor(joints[i].depthX * RAWWIDTH);
+        let ypos = Math.floor(joints[i].depthY * RAWHEIGHT);
         jointCoords.push({"x": xpos, "y": ypos});
     }
 
@@ -214,20 +214,20 @@ function calcJointCoords(joints){
 }
 
 function getDataForJSON(jointCoords, depths, colors){
-    for(var i = 0; i < jointCoords.length; i++){
+    for(let i = 0; i < jointCoords.length; i++){
 
-        var pArray = [];
+        let pArray = [];
 
-        var jointX = jointCoords[i].x;
-        var jointY = jointCoords[i].y;
+        let jointX = jointCoords[i].x;
+        let jointY = jointCoords[i].y;
 
-        var zIndex = 2 * (jointY * RAWWIDTH + jointX);
-        var jointZ = Math.round(map(depths[zIndex] + depths[zIndex + 1] * 255, 0, 4499, -500, 500));
+        let zIndex = 2 * (jointY * RAWWIDTH + jointX);
+        let jointZ = Math.round(map(depths[zIndex] + depths[zIndex + 1] * 255, 0, 4499, -500, 500));
         jointCoords[i].z = jointZ;
 
         if(jointY < 424 && jointX < 512 && jointX > 0 && jointY > 0){
-            var pnum = 30;
-            var dist;
+            let pnum = 30;
+            let dist;
 
             if(i == 1){
                 dist = 60;
@@ -250,9 +250,9 @@ function getDataForJSON(jointCoords, depths, colors){
             }
 
             while(pArray.length < pnum){
-                var x = jointX + Math.floor(Math.random() * dist * 2) - dist;
-                var y = jointY + Math.floor(Math.random() * dist * 2) - dist;
-                var index = 2 * (y * RAWWIDTH + x);
+                let x = jointX + Math.floor(Math.random() * dist * 2) - dist;
+                let y = jointY + Math.floor(Math.random() * dist * 2) - dist;
+                let index = 2 * (y * RAWWIDTH + x);
 
                 while(index < 0 || index > 2 * 512 * 424){
                     x = jointX + Math.floor(Math.random() * dist * 2) - dist;
@@ -260,20 +260,20 @@ function getDataForJSON(jointCoords, depths, colors){
                     index = 2 * (y * RAWWIDTH + x);
                 }
 
-                var z = Math.round(map(depths[index] + depths[index + 1] * 255, 0, 4499, -500, 500));
+                let z = Math.round(map(depths[index] + depths[index + 1] * 255, 0, 4499, -500, 500));
 
                 if((jointX - x) * (jointX - x) + (jointY - y) * (jointY - y) + (jointZ - z) * (jointZ - z) < dist * dist){
-                    // var mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
-                    // var mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
-                    var cIndex = 4 * (y * RAWWIDTH + x);
+                    // let mappedX = Math.round(map(x, 0, RAWWIDTH - 1, 0, COLWIDTH - 1));
+                    // let mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
+                    let cIndex = 4 * (y * RAWWIDTH + x);
 
                     let rVal = ("0" + Math.round(map(colors[cIndex], 0, 255, 0, 99))).slice(-2);
                     let gVal = ("0" + Math.round(map(colors[cIndex + 1], 0, 255, 0, 99))).slice(-2);
                     let bVal = ("0" + Math.round(map(colors[cIndex + 2], 0, 255, 0, 99))).slice(-2);
 
-                    // var r = ("0" + colors[index]).slice(-3);
-                    // var g = ("0" + colors[index + 1]).slice(-3);
-                    // var b = ("0" + colors[index + 2]).slice(-3);
+                    // let r = ("0" + colors[index]).slice(-3);
+                    // let g = ("0" + colors[index + 1]).slice(-3);
+                    // let b = ("0" + colors[index + 2]).slice(-3);
 
                     let c = rVal + gVal + bVal;
 
@@ -294,7 +294,7 @@ function map (num, in_min, in_max, out_min, out_max) {
 
 function sendData(newBody){
   //  console.log((new Date()) + " sending new data");
-    var data = JSON.stringify(newBody);
+    let data = JSON.stringify(newBody);
     socket.emit('message', data);
 
     if(saveFeed && data != "[]"){
@@ -320,7 +320,7 @@ Prep data for sending saved JSON data
 function sendSavedData(){
     if(socket.connected){
         //console.log(dataIndex);
-        var currentData = JSON.stringify(skeletonData[dataIndex]);
+        let currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
         dataIndex++;
