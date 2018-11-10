@@ -6,12 +6,14 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
-var debug = true;
-
-var logName = new Date().toISOString().split('T')[0] + ".log";
-
-var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+var debug = false;
 var log_stdout = process.stdout;
+
+if(debug){
+    var logName = new Date().toISOString().split('T')[0] + ".log";
+
+    var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+}
 
 console.log = function(d) { //
     var timeStamp = new Date().toISOString();
@@ -21,7 +23,6 @@ console.log = function(d) { //
     }
 
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
-
 
 };
 
