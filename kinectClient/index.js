@@ -1,7 +1,9 @@
 let Kinect2, kinect;
 
 const io = require('socket.io-client');
-const addr = 'https://theflowroom-server.herokuapp.com/';
+//const addr = 'https://theflowroom-server.herokuapp.com/';
+//europe server
+const addr = 'https://the-flow-room-server.herokuapp.com/';
 //const addr = 'http://localhost:8000';
 //const addr = "http://128.122.151.57:8000"
 const socket = io(addr);
@@ -26,7 +28,7 @@ console.log = function(d) { //
     log_stdout.write(util.format(timeStamp + ": " + d) + '\n');
 };
 
-let liveFeed = false;
+let liveFeed = true;
 let saveFeed = false;
 let firstData = true;
 
@@ -193,10 +195,10 @@ function startSkeletonTracking() {
 
 function stopSkeletonTracking() {
     console.log('stopping skeleton');
-    kinect.closeBodyReader();
+   // kinect.closeBodyReader();
     kinect.removeAllListeners();
 
-    kinect.closeRawDepthReader();
+    //kinect.closeRawDepthReader();
     rawDepth = false;
     busy = false;
 }
