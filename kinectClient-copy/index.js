@@ -106,8 +106,6 @@ Prep Kinect for live feed
  */
 var RAWWIDTH = 512;
 var RAWHEIGHT = 424;
-var COLWIDTH = 1920;
-var COLHEIGHT = 1080;
 
 var busy = false;
 
@@ -160,6 +158,7 @@ function startSkeletonTracking() {
                             getDataForJSON(jointCoords, depthData, colorData);
 
                             newBody.push({
+                                "sid": socket.id,
                                 "bodyIndex": body.bodyIndex,
                                 "trackingId": body.trackingId,
                                 "leftHandState": body.leftHandState,
@@ -181,7 +180,6 @@ function startSkeletonTracking() {
                     sendData(newBody);
                 }
             }
-
 
             busy = false;
         });
@@ -269,19 +267,18 @@ function getDataForJSON(jointCoords, depths, colors){
                     // var mappedY = Math.round(map(y, 0, RAWHEIGHT - 1, 0, COLHEIGHT - 1));
                     var cIndex = 4 * (y * RAWWIDTH + x);
 
-                    var r = Math.round(map(colors[cIndex], 0, 255, 0, 99));
-                    var g = Math.round(map(colors[cIndex + 1], 0, 255, 0, 99));
-                    var b = Math.round(map(colors[cIndex + 2], 0, 255, 0, 99));
+                    let rVal = ("0" + Math.round(map(colors[cIndex], 0, 255, 0, 99))).slice(-2);
+                    let gVal = ("0" + Math.round(map(colors[cIndex + 1], 0, 255, 0, 99))).slice(-2);
+                    let bVal = ("0" + Math.round(map(colors[cIndex + 2], 0, 255, 0, 99))).slice(-2);
 
                     // var r = ("0" + colors[index]).slice(-3);
                     // var g = ("0" + colors[index + 1]).slice(-3);
                     // var b = ("0" + colors[index + 2]).slice(-3);
 
-                    var c = r * 10000 + g * 100 + b;
-                    //var c = r + g + b;
-                    //var c = colors[cIndex + 1] * 100000 + colors[cIndex + 2] * 1000 + colors[cIndex + 3];
+                    let c = rVal + gVal + bVal;
 
-                    pArray.push({"x": x, "y": y, "z": z, "r": colors[cIndex], "g": colors[cIndex + 1], "b": colors[cIndex + 2], "c": c});
+                    //"rawC": [colors[cIndex], colors[cIndex + 1], colors[cIndex + 2]],
+                    pArray.push({"x": x, "y": y, "z": z, "c": c});
                 }
             }
 
