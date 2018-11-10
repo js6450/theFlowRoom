@@ -157,8 +157,13 @@ function startSkeletonTracking() {
                         if (!sendAllBodies) {
                             getDataForJSON(jointCoords, depthData, colorData);
 
+                            let h = (new Date()).getHours();
+                            let m = (new Date()).getMinutes();
+                            let s = (new Date()).getSeconds();
+
                             newBody.push({
                                 "sid": socket.id,
+                                "time": h + "-" + m + "-" + s,
                                 "bodyIndex": body.bodyIndex,
                                 "trackingId": body.trackingId,
                                 "leftHandState": body.leftHandState,
