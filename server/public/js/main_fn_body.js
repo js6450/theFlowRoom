@@ -21,7 +21,7 @@ function createBody( id ) {
 	);
 
 	// SCALE
-	body.scale = 0.5 + Math.random() * 2.5;
+	body.scale = 0.5 + Math.random() * 2.0;
 
 	// LIGHT
 	let hue = Math.floor(Math.random() * 360);
@@ -108,7 +108,7 @@ function createBody( id ) {
 	} );
 
 	// create the particle system
-	body.joints.mesh = new THREE.Points( bodyJointsGeometry, shaderMaterial );
+	body.joints.mesh = new THREE.Points( bodyJointsGeometry, bodyShaderMaterial );
 	body.group.add( body.joints.mesh );
 
 	scene.add(body.group);
@@ -230,24 +230,9 @@ function updateBodies() {
 
 	// BODY
 
-
-
 	// for instancing particles
 	let count = 0;
 	let maxCount = instanceOffsetAttribute.count;
-
-	// add or remove bodies
-	// while ( bodyData.length > bodies.length ) {
-	// 	createBody();
-	// 	console.log( "! Body Added" );
-	// }
-	// let bIndex = bodies.length - 1;
-	// while ( bodyData.length < bodies.length ) {
-	// 	scene.remove( bodies[bIndex].group );
-	// 	bodies.splice( bIndex, 1 );
-	// 	bIndex--;
-	// 	console.log( "! Body Removed" );
-	// }
 
 	// main loop
 	for ( let bodyIndex = bodies.length-1; bodyIndex >= 0; bodyIndex-- ) {
@@ -269,6 +254,12 @@ function updateBodies() {
 			bodies.splice( bodyIndex, 1 );
 			console.log( "! Body Removed" );
 		}
+
+		// update lights' intensity
+		for (let li = 0; li < body.lights.length; li++) {
+			body.lights[li].intensity = 0.05 * body.activity;
+		}
+
 
 		if (bodyData == undefined) continue;
 
@@ -297,7 +288,7 @@ function updateBodies() {
 			// bodies[bodyIndex].joints.colors[ i * 3 + 1 ] = 0;
 			// bodies[bodyIndex].joints.colors[ i * 3 + 2 ] = 0;
 
-			// light update
+			// update light positions
 			let lightIndex;
 			switch (i) {
 				case BODY.CHEST:
@@ -326,12 +317,14 @@ function updateBodies() {
 			}
 
 			// size update
-			sizes[ i ] = (10 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
+			sizes[ i ] = (500 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
 
 			body.joints.mesh.geometry.attributes.position.needsUpdate = true;
-			body.joints.mesh.geometry.attributes.color.needsUpdate = true;
+			// body.joints.mesh.geometry.attributes.color.needsUpdate = true;
 			body.joints.mesh.geometry.attributes.size.needsUpdate = true;
 
+
+			// POINT CLOUD
 
 			if (bodyData.joints[i].px != undefined) {
 
@@ -340,9 +333,9 @@ function updateBodies() {
 					let colorString = bodyData.joints[i].px[pxIndex].c;
 					let r,g,b;
 					if (typeof colorString == "string") {
-						r = parseInt( colorString.substr(0, 2) ) * 0.016;
-						g = parseInt( colorString.substr(2, 2) ) * 0.016;
-						b = parseInt( colorString.substr(4, 2) ) * 0.016;
+						r = parseInt( colorString.substr(0, 2) ) * 0.016 - Math.random() * 0.15;
+						g = parseInt( colorString.substr(2, 2) ) * 0.016 - Math.random() * 0.15;
+						b = parseInt( colorString.substr(4, 2) ) * 0.016 - Math.random() * 0.15;
 					} else {
 						r = body.color.r;
 						g = body.color.g;
@@ -367,10 +360,10 @@ function updateBodies() {
 					let cG = body.color.g * 0.6 + Math.random() * 0.4;
 					let cB = body.color.b * 0.6 + Math.random() * 0.4;
 
-					let pct1 = Math.sin(time* 0.0005) * 0.5 + 0.5;
+					let pct1 = Math.abs( Math.sin(time * body.colorfulFreq) );
 					let pct2 = 1.0 - pct1;
 					instanceColorAttribute.setXYZ( instanceIndex, r*pct1 + cR*pct2, g*pct1 + cG*pct2, b*pct1 + cB*pct2 );
-					//instanceColorAttribute.setXYZ( instanceIndex, r,g,b );
+					// instanceColorAttribute.setXYZ( instanceIndex, r,g,b );
 
 					instanceLastTimeAttribute.setX( instanceIndex, time * 0.005 );
 					instanceScaleAttribute.setX( instanceIndex, body.scale * body.activity );

@@ -4,7 +4,7 @@ function createFloor() {
 
   // Material
   let floorMaterial = new THREE.MeshPhysicalMaterial( {
-    color: 0xffffff,
+    color: 0xAAAAAA,
     // emissive : 0x000000,
     //roughness : 0.5,
     //metalness : 0.5,
@@ -87,8 +87,9 @@ function updateFloor() {
           bParticle.repel( p, 0.0010 );
         }
       }
-
-      p.attractedTo( p.origin, 0.0025 );
+      //let fluct = new THREE.Vector3(p.origin.x, p.origin.y + Math.sin(time*0.0005 + p.origin.x * 0.003 + p.origin.z * 0.004) * 30, p.origin.z);
+      let fluct = getNoiseVector(p.origin.x, p.origin.y, p.origin.z).multiplyScalar(12).add(p.origin);
+      p.attractedTo( fluct, 0.0025 );
       p.update();
       p.applyDamping( 0.975 );
       // p.checkBoundaries( WORLD_WIDTH, WORLD_HEIGHT, WORLD_DEPTH);

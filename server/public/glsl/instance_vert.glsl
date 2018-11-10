@@ -58,10 +58,11 @@ void main(){
   vPosition = newPos + offset;
 
   // TRANSLATION
-  float fluctX = sin( (time + vPosition.x * 0.05) * 0.18 ) * 0.4;
-  float fluctZ = cos( (time + vPosition.z * 0.05) * 0.22 ) * 0.4;
+  float fluctX = sin( (time + vPosition.x * 0.08) * 0.18 ) * 0.4;
+  float fluctZ = cos( (time + vPosition.z * 0.08) * 0.22 ) * 0.4;
   float fluctY = sin( time * 0.1 ) * 0.35;
-  vec3 transPos = vec3(fluctX, fluctY, fluctZ) * t * 5.0;
+  vec3 transPos = vec3(fluctX, fluctY, fluctZ) * t * t * t * t * 0.03; // t * 5.0;
+  //vec3 transPos = vec3(fluctX, fluctY, fluctZ) * t * t  * t * t * t * t * 0.01; // t * 0.5;
   vPosition += transPos;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4( vPosition, 1.0 );

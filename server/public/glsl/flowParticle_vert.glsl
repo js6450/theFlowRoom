@@ -10,8 +10,8 @@ void main() {
   vPosition = position;
 
   // TRANSLATION
-  float fluctX = sin( (time + vPosition.x * 0.05) * 0.18 ) * 0.4;
-  float fluctY = cos( (time + vPosition.y * 0.05) * 0.22 ) * 0.4;
+  float fluctX = cos( (time + vPosition.x * 0.06) * 0.07 ) * 0.5;
+  float fluctY = sin( (time + vPosition.y * 0.06) * 0.10 ) * 0.5;
   float fluctZ = 0.0; //sin( time * 0.1 ) * 0.35;
   vec3 transPos = vec3(fluctX, fluctY, fluctZ) * 50.0;
   vPosition += transPos;

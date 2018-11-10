@@ -4,12 +4,12 @@
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 
-const FLOW_PARTICLES_SPACING = 100;
+const FLOW_PARTICLES_SPACING = 80;
 const FLOOR_PARTICLES_SPACING = 80;
 
 const WORLD_WIDTH = 1600;
-const WORLD_HEIGHT = FLOW_PARTICLES_SPACING * 10;
 const WORLD_DEPTH = 1600;
+const WORLD_HEIGHT = FLOW_PARTICLES_SPACING * 12;
 
 const BODY_JOINTS_MAX = 21;
 const BODY_PARTICLES_MAX = 610; // TODO: improve this.
@@ -24,6 +24,10 @@ const BODY_EFFECT_PARTICLES_MAX = BODY_PARTICLES_MAX * MAX_OF_BODIES * 2;
 
 const FLOW_PARTICLES_MAX = (WORLD_WIDTH/FLOW_PARTICLES_SPACING) * (WORLD_HEIGHT/FLOW_PARTICLES_SPACING) * (WORLD_DEPTH/FLOW_PARTICLES_SPACING);
 const FLOOR_PARTICLES_MAX = (WORLD_WIDTH/FLOOR_PARTICLES_SPACING) * (WORLD_DEPTH/FLOOR_PARTICLES_SPACING);
+
+// CAMERA
+const CAMERA_DISTANCE_MAX = WORLD_WIDTH - 500;
+const CAMERA_DISTANCE_MIN = 10;
 
 console.log("! Flow Particles: " + FLOW_PARTICLES_MAX);
 console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
@@ -57,7 +61,7 @@ var flowTexture, floorTexture, bodyTexture;
 
 // MATERIALS
 var flowParticleMaterial;
-var shaderMaterial;
+var bodyShaderMaterial;
 
 // BODY POINT CLOUD
 var instanceObjs;
@@ -84,6 +88,7 @@ var pointLight;
 
 
 // GUI
+/*
 var params = {
 	pointLightColor: "#2711ca",
 	pointLightDistance: 800
@@ -96,6 +101,7 @@ gui.addColor(params, 'pointLightColor').onChange(function (e) {
 gui.add(params, 'pointLightDistance', 0, WORLD_WIDTH).onChange(function (e) {
 	pointLight.distance = e;
 });
+*/
 
 
 
@@ -178,7 +184,7 @@ function init() {
 	let uniforms = {
 		texture:   { value: textureLoader.load( "img/particle_sprite.png" ) }
 	};
-	shaderMaterial = new THREE.ShaderMaterial( {
+	bodyShaderMaterial = new THREE.ShaderMaterial( {
 		uniforms:       uniforms,
 		vertexShader:   ShaderLoader.get( "particle_vert" ),
 		fragmentShader: ShaderLoader.get( "particle_frag" ),
@@ -193,14 +199,14 @@ function init() {
 	// SCENE
 
 	scene = new THREE.Scene();
-	scene.fog = new THREE.Fog( 0x000000, 1000, 4000 );
+	scene.fog = new THREE.Fog( 0x000000, 100, 2500 );
 
 
 
 	// CAMERA
 
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 10, 20000 );
-	camera.position.z = 1500;
+	camera.position.z = CAMERA_DISTANCE_MAX;
 
 
 
@@ -236,7 +242,7 @@ function init() {
 	helper.material.color.setHex( 0x080808 );
 	helper.material.blending = THREE.AdditiveBlending;
 	helper.material.transparent = true;
-	//scene.add( helper );
+	// scene.add( helper );
 
 
 
@@ -271,6 +277,7 @@ function init() {
 		planeGeometry.vertices[i].z = Math.random() * 200;
 	}
 
+
 	//let planeMaterial = new THREE.MeshPhongMaterial({color: 0xffffff});
 	let planeMaterial = new THREE.MeshPhysicalMaterial( {
 		color: 0xffffff,
@@ -279,11 +286,11 @@ function init() {
 		//metalness : 0.5,
 		reflectivity : 0.0,
 		//side : THREE.DoubleSide,
-		transparent : true,
-		opacity: 0.2,
+		// transparent : true,
+		// opacity: 0.2,
 		flatShading : true,
 		//wireframe : true,
-		map : floorTexture
+		// map : floorTexture
 	} );
 
 
@@ -295,7 +302,6 @@ function init() {
 	plane.position.z = 0;
 	scene.add(plane);
 	*/
-
 
 
 	// FLOW
@@ -330,22 +336,42 @@ function animate() {
 
 function render() {
 
+	updateCameraPosition();
+	updateGlobalLight();
+
 	updateBodyData();
 	updateBodies();
 	updateFlow();
 	updateFloor();
 
-	// LIGHT MOVEMENT
-
-	pointLight.position.x = Math.cos(time * 0.001) * 500;
-	pointLight.position.y = 0;
-	pointLight.position.z = Math.sin(time * 0.001) * 500;
-
 	renderer.render( scene, camera );
 }
 
 
+function updateCameraPosition() {
+	// swing
+	camera.position.applyAxisAngle( new THREE.Vector3(0, 1, 0), Math.sin(time * 0.0005)*0.0005 );
+	camera.position.applyAxisAngle( new THREE.Vector3(1, 0, 0), Math.cos(time * 0.0003)*0.0003 );
 
+	// don't let it move too far away
+	if (camera.position.length() > CAMERA_DISTANCE_MAX) {
+		camera.position.normalize();
+		camera.position.multiplyScalar(CAMERA_DISTANCE_MAX)
+	} else if (camera.position.length() < CAMERA_DISTANCE_MIN) {
+		camera.position.normalize();
+		camera.position.multiplyScalar(CAMERA_DISTANCE_MIN);
+	}
+	// don't let it move too up or down
+	if (camera.position.y > WORLD_HEIGHT/2 || camera.position.y < -WORLD_HEIGHT/2) {
+		(camera.position.y > WORLD_HEIGHT/2) ? camera.position.y = WORLD_HEIGHT/2 : camera.position.y = -WORLD_HEIGHT/2;
+	}
+}
+
+function updateGlobalLight() {
+	pointLight.position.x = Math.cos(time * 0.0003) * WORLD_WIDTH/2;
+	pointLight.position.y = 0;
+	pointLight.position.z = Math.sin(time * 0.0003) * WORLD_DEPTH/2;
+}
 
 
 // BROWSER FUNCTIONS

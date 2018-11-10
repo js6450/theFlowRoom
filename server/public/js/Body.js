@@ -7,6 +7,7 @@ class Body {
     this.joints;
     this.lights = [];
     this.color;
+    this.colorfulFreq = Math.random() * 0.0001 + 0.0001;
 
     this.activity = 0.0;
     //this.pointCloud;
