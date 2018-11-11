@@ -34,7 +34,7 @@ console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
 
 
 var socket = io();
-
+var dataReceived = false;
 
 // three.js main
 var container, stats;
@@ -149,6 +149,7 @@ function init() {
 	// SOCKET
 	socket.emit('status', 1);
 	socket.on('sendData', onSendData);
+	socket.on('statusChange', onStatusChange);
 
 
 
@@ -391,10 +392,17 @@ function onWindowResize() {
 function onSendData(data){
 
 	if ( data != null ){
+		dataReceived = true;
+
 		for ( let i = 0 ; i < data.length; i++) {
 			newData[i] = JSON.parse(data[i]);
 		}
 	}
-	// console.log( newData[0] );
 
+}
+
+function onStatusChange(data){
+	console.log("! Device index " + data + " disconnected");
+
+	newData.splice(data, 1);
 }

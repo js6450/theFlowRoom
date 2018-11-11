@@ -28,6 +28,8 @@ console.log = function(d) { //
 
 var kinectCount = 0;
 var kinectData = [];
+var clearData = false;
+let clearedDeviceIndex;
 
 app.set("views", __dirname + "/views");
 app.engine(".html", require('ejs').__express);
@@ -53,8 +55,18 @@ io.on('connection', function(socket){
     function broadcastData(){
         if(socket.connected){
 
-            if(kinectData != null){
+            if(kinectData.length > 0){
+                //console.log('broadcasting data of ' + kinectData.length + " length");
                 socket.emit('sendData', kinectData);
+                //kinectData = [];
+            }
+
+            if(clearData){
+                console.log('clear data of device index ' + clearedDeviceIndex);
+
+                socket.emit('statusChange', clearedDeviceIndex);
+
+                clearData = false;
             }
 
             setTimeout(broadcastData, 50);
@@ -99,11 +111,17 @@ io.on('connection', function(socket){
     });
 
     socket.on('disconnect', function(){
-        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
 
         if(socket.userType == 0){
+
+            clearData = true;
+            clearedDeviceIndex = socket.kinectIndex;
+
             kinectData.splice(socket.kinectIndex, 1);
             kinectCount--;
+
+            console.log("splice kinectData array, now array length: " + kinectData.length);
+
         }
 
        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
