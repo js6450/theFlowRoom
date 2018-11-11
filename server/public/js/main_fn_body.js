@@ -137,6 +137,7 @@ function createBodyPointCloud() {
 	let instScales = [];
 	let instLastTime = [];
 	let instDecaySpeed = [];
+	let instScatterSpeed = [];
 
 	// instanced attributes
 	for ( let i = 0; i < instances; i ++ ) {
@@ -146,8 +147,9 @@ function createBodyPointCloud() {
 		// instColors.push( Math.random(), Math.random(), Math.random(), Math.random() * 0.5 );
 		instSizes.push( 8.0 + Math.random() * 30 );
 		instScales.push( 1.0 );
-		instLastTime.push( 0 );
+		instLastTime.push( 0.0 );
 		instDecaySpeed.push( Math.random() * 0.25 + 0.3 );
+		instScatterSpeed.push( 0.03 );
 	}
 
 	// box geometry
@@ -167,11 +169,13 @@ function createBodyPointCloud() {
 	instanceColorAttribute = new THREE.InstancedBufferAttribute( new Float32Array( instColors ), 4 ).setDynamic( true );
 	instanceLastTimeAttribute = new THREE.InstancedBufferAttribute( new Float32Array( instLastTime ), 1 ).setDynamic( true );
 	instanceScaleAttribute = new THREE.InstancedBufferAttribute( new Float32Array( instScales ), 1 ).setDynamic( true );
+	instanceScatterSpeedAttribute = new THREE.InstancedBufferAttribute( new Float32Array( instScatterSpeed ), 1 ).setDynamic( true );
 
 	geometry.addAttribute( 'offset', instanceOffsetAttribute );
 	geometry.addAttribute( 'lastTime', instanceLastTimeAttribute );
 	geometry.addAttribute( 'color', instanceColorAttribute );
 	geometry.addAttribute( 'scale', instanceScaleAttribute );
+	geometry.addAttribute( 'scatterSpeed', instanceScatterSpeedAttribute );
 	geometry.addAttribute( 'size', new THREE.InstancedBufferAttribute( new Float32Array( instSizes ), 1 ) );
 	geometry.addAttribute( 'decaySpeed', new THREE.InstancedBufferAttribute( new Float32Array( instDecaySpeed ), 1 ) );
 
@@ -196,6 +200,8 @@ function createBodyPointCloud() {
 
 
 function updateBodyData() {
+
+	if (newData == null) return;
 
 	// update body data with the steaming data
 	bodyDataObjs = [];
@@ -248,6 +254,10 @@ function updateBodies() {
 		}
 		// decay
 		body.updateActivity( -0.005 );
+
+		// quantity of motion
+		body.updateMotion();
+
 		// remove if it's done
 		if (body.activity <= 0.0) {
 			scene.remove( body.group );
@@ -261,6 +271,48 @@ function updateBodies() {
 		}
 
 
+
+
+		// update interaction
+
+		// for ( let otherIndex = bodies.length-1; otherIndex >= 0; otherIndex-- ) {
+		// 	if (bodyIndex == otherIndex) continue;
+		//
+		// 	let otherBody = bodies[otherIndex];
+		// 	//BODY.CHEST
+		// 	//BODY.HEAD
+		// 	//BODY.HAND_RIGHT
+		// 	//BODY.HAND_LEFT
+		//
+		// 	// hand
+		// 	let handState
+		// 	for (let handIndex = 0; handIndex < 2; handIndex++) {
+		//
+		// 		let hand;
+		// 		if (handIndex == 0) hand = body.joints.particles[BODY.HAND_LEFT];
+		// 		else if (handIndex == 1) hand = body.joints.particles[BODY.HAND_RIGHT];
+		//
+		// 		for (let otherHandIndex = 0; otherHandIndex < 2; otherHandIndex++) {
+		// 			let otherHand;
+		// 			if (otherHandIndex == 0) otherHand = otherBody.joints.particles[BODY.HAND_LEFT];
+		// 			else if (otherHandIndex == 1) otherHand = otherBody.joints.particles[BODY.HAND_RIGHT];
+		//
+		// 			let distance = hand.distanceTo.otherHand;
+		// 			if (distance < 20) {
+		//
+		//
+		// 			}
+		//
+		// 		}
+		// 	}
+		// }
+
+
+
+
+
+
+		// body joints and point cloud update
 		if (bodyData == undefined) continue;
 
 		let prevPxIndex = 0;
@@ -367,6 +419,7 @@ function updateBodies() {
 
 					instanceLastTimeAttribute.setX( instanceIndex, time * 0.005 );
 					instanceScaleAttribute.setX( instanceIndex, body.scale * body.activity );
+					instanceScatterSpeedAttribute.setX( instanceIndex, body.motion );
 
 					instanceIndex++;
 					if (instanceIndex == maxCount) {
@@ -382,6 +435,7 @@ function updateBodies() {
 	instanceColorAttribute.needsUpdate = true;
 	instanceLastTimeAttribute.needsUpdate = true;
 	instanceScaleAttribute.needsUpdate = true;
+	instanceScatterSpeedAttribute.needsUpdate = true;
 	instanceObjs.material.uniforms.time.value = time * 0.005;
 
 }

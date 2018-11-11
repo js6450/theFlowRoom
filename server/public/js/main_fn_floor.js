@@ -84,11 +84,11 @@ function updateFloor() {
       for ( let b = 0; b < bodies.length; b ++ ) {
         for ( let j = 0; j < BODY_JOINTS_MAX; j ++ ) {
           let bParticle = bodies[b].joints.particles[j];
-          bParticle.repel( p, 0.0010 );
+          bParticle.repel( p, 0.0050 ); // 0.0010
         }
       }
       //let fluct = new THREE.Vector3(p.origin.x, p.origin.y + Math.sin(time*0.0005 + p.origin.x * 0.003 + p.origin.z * 0.004) * 30, p.origin.z);
-      let fluct = getNoiseVector(p.origin.x, p.origin.y, p.origin.z).multiplyScalar(12).add(p.origin);
+      let fluct = getNoiseVector(p.origin.x, p.origin.y, p.origin.z).multiplyScalar(15).add(p.origin);
       p.attractedTo( fluct, 0.0025 );
       p.update();
       p.applyDamping( 0.975 );

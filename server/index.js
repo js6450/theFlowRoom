@@ -28,8 +28,12 @@ console.log = function(d) { //
 
 var kinectCount = 0;
 var kinectData = [];
+
 var clearData = false;
 let clearedDeviceIndex;
+
+let clientTotal = 0;
+let clientDataCleared = 0;
 
 app.set("views", __dirname + "/views");
 app.engine(".html", require('ejs').__express);
@@ -62,11 +66,18 @@ io.on('connection', function(socket){
             }
 
             if(clearData){
-                console.log('clear data of device index ' + clearedDeviceIndex);
+                if(clientDataCleared < clientTotal){
+                    console.log('clear data of device index ' + clearedDeviceIndex);
 
-                socket.emit('statusChange', clearedDeviceIndex);
+                    socket.emit('statusChange', clearedDeviceIndex);
+                }else{
+                    console.log("reset data clear values");
+                    console.log("in reset: cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
 
-                clearData = false;
+                    clientDataCleared = 0;
+                    clearData = false;
+                }
+
             }
 
             setTimeout(broadcastData, 50);
@@ -74,6 +85,15 @@ io.on('connection', function(socket){
     }
 
     broadcastData();
+
+    socket.on('dataCleared', function(data){
+        if(data == 1 && clearData){
+            clientDataCleared++;
+            console.log("data cleared");
+
+        }
+
+    });
 
     socket.on('status', function(data){
         //status 0: kinect connection
@@ -87,6 +107,10 @@ io.on('connection', function(socket){
             kinectCount++;
 
             console.log("Current number of kinect clients connected: " + kinectCount);
+        }else if(socket.userType == 1){
+            clientTotal++;
+
+            console.log("Current number of web clients connected: " + clientTotal);
         }
 
     });
@@ -120,8 +144,12 @@ io.on('connection', function(socket){
             kinectData.splice(socket.kinectIndex, 1);
             kinectCount--;
 
+            console.log("cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
             console.log("splice kinectData array, now array length: " + kinectData.length);
 
+        }else if(socket.userType == 1){
+            clientTotal--;
+            console.log("client total: " + clientTotal);
         }
 
        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");

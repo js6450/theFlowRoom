@@ -76,13 +76,13 @@ function updateFlow() {
     for ( let b = 0; b < bodies.length; b ++ ) {
       for ( let j = 0; j < BODY_JOINTS_MAX; j ++ ) {
         let bParticle = bodies[b].joints.particles[j];
-        bParticle.repel( p, 0.0010 );
+        bParticle.repel( p, 0.0120 ); // 0.0010
       }
     }
 
     p.attractedTo( p.origin, 0.0025 );
     p.update();
-    p.applyDamping( 0.975 );
+    p.applyDamping( 0.982 ); // 0.975
     // p.checkBoundaries( WORLD_WIDTH, WORLD_HEIGHT, WORLD_DEPTH);
 
     flow.positions[ i * 3     ] = p.pos.x;

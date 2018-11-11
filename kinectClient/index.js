@@ -1,10 +1,10 @@
 let Kinect2, kinect;
 
 const io = require('socket.io-client');
-//const addr = 'https://theflowroom-server.herokuapp.com/';
+const addr = 'https://theflowroom-server.herokuapp.com/';
 //europe server
 //const addr = 'https://the-flow-room-server.herokuapp.com/';
-const addr = 'http://localhost:8000';
+//const addr = 'http://localhost:8000';
 //const addr = "http://128.122.151.57:8000"
 const socket = io(addr);
 

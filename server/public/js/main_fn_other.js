@@ -1,3 +1,26 @@
+function updateCameraPosition() {
+	// swing
+	camera.position.applyAxisAngle( new THREE.Vector3(0, 1, 0), Math.sin(time * 0.0005)*0.0005 );
+	camera.position.applyAxisAngle( new THREE.Vector3(1, 0, 0), Math.cos(time * 0.0003)*0.0003 );
+
+	// don't let it move too far away
+	camera.position.clampLength(CAMERA_DISTANCE_MIN, CAMERA_DISTANCE_MAX);
+	// don't let it move too up or down
+	let adj = 50;
+	if (camera.position.y > WORLD_HEIGHT/2 - adj || camera.position.y < -WORLD_HEIGHT/2 + adj) {
+		(camera.position.y > WORLD_HEIGHT/2 - adj) ? camera.position.y = WORLD_HEIGHT/2 - adj : camera.position.y = -WORLD_HEIGHT/2 + adj;
+	}
+}
+
+
+function updateGlobalLight() {
+	pointLight.position.x = Math.cos(time * 0.0003) * WORLD_WIDTH/2;
+	pointLight.position.y = 0;
+	pointLight.position.z = Math.sin(time * 0.0003) * WORLD_DEPTH/2;
+}
+
+
+
 function createText( text, x, y, z ) {
 
 	fontLoader.load( 'font/helvetiker_regular.typeface.json', function ( font ) {

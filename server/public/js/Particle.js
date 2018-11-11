@@ -25,6 +25,8 @@ class Particle {
     this.vel.add( this.acc );
     this.pos.add( this.vel );
     this.acc.multiplyScalar( 0 );
+    //limit
+    this.vel.clampLength(0, 15);
   }
   applyDamping( amt ) {
     this.vel.multiplyScalar( amt );
