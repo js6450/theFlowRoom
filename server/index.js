@@ -56,6 +56,10 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
 
+    socket.on('requestData', function(){
+        broadcastData();
+    });
+
     function broadcastData(){
         if(socket.connected){
 
@@ -79,8 +83,6 @@ io.on('connection', function(socket){
                 }
 
             }
-
-            setTimeout(broadcastData, 50);
         }
     }
 
@@ -90,9 +92,7 @@ io.on('connection', function(socket){
         if(data == 1 && clearData){
             clientDataCleared++;
             console.log("data cleared");
-
         }
-
     });
 
     socket.on('status', function(data){

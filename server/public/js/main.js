@@ -341,6 +341,8 @@ function render() {
 	updateCameraPosition();
 	updateGlobalLight();
 
+	socket.emit('requestData');
+
 	updateBodyData();
 	updateBodies();
 	updateFlow();
