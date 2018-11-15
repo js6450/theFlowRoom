@@ -34,6 +34,7 @@ console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
 
 
 var socket = io();
+let requestFrame = 1;
 
 
 // three.js main
@@ -325,6 +326,7 @@ function init() {
 
 function animate() {
 	time = performance.now();
+
 	frameCount ++;
 
 	requestAnimationFrame( animate );
@@ -341,7 +343,9 @@ function render() {
 	updateCameraPosition();
 	updateGlobalLight();
 
-	socket.emit('requestData');
+	if(frameCount % requestFrame == 0){
+        socket.emit('requestData');
+    }
 
 	updateBodyData();
 	updateBodies();
@@ -385,4 +389,22 @@ function onStatusChange(data){
 	newData.splice(data, 1);
 
 	socket.emit('dataCleared', 1);
+}
+
+
+document.addEventListener('keydown', onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+	if(event.key == "="){
+		requestFrame++;
+
+		console.log("! requestFrame increased to : " + requestFrame);
+	}
+
+	if(event.key == "-"){
+		if(requestFrame > 1){
+			requestFrame--;
+
+            console.log("! requestFrame decreased to : " + requestFrame);
+        }
+	}
 }
