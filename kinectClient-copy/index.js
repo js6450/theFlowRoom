@@ -1,8 +1,10 @@
 let Kinect2, kinect;
 
 const io = require('socket.io-client');
-const addr = 'https://theflowroom-server.herokuapp.com/';
-//const addr = 'http://localhost:8000';
+//const addr = 'https://theflowroom-server.herokuapp.com/';
+//europe server
+//const addr = 'https://the-flow-room-server.herokuapp.com/';
+const addr = 'http://localhost:8000';
 //const addr = "http://128.122.151.57:8000"
 const socket = io(addr);
 
@@ -46,9 +48,9 @@ function init(){
     }
 
     if(saveFeed){
-       dataDest += Date.now() + ".json";
+        dataDest += Date.now() + ".json";
 
-       console.log("Saving data to " + dataDest);
+        console.log("Saving data to " + dataDest);
     }
 }
 
@@ -157,8 +159,13 @@ function startSkeletonTracking() {
                         if (!sendAllBodies) {
                             getDataForJSON(jointCoords, depthData, colorData);
 
+                            let h = (new Date()).getHours();
+                            let m = (new Date()).getMinutes();
+                            let s = (new Date()).getSeconds();
+
                             newBody.push({
                                 "sid": socket.id,
+                                "time": h + "-" + m + "-" + s,
                                 "bodyIndex": body.bodyIndex,
                                 "trackingId": body.trackingId,
                                 "leftHandState": body.leftHandState,
@@ -193,11 +200,10 @@ function startSkeletonTracking() {
 
 function stopSkeletonTracking() {
     console.log('stopping skeleton');
-
     // kinect.closeBodyReader();
     kinect.removeAllListeners();
-    //
-    // kinect.closeRawDepthReader();
+
+    //kinect.closeRawDepthReader();
     rawDepth = false;
     busy = false;
 }
@@ -294,7 +300,7 @@ function map (num, in_min, in_max, out_min, out_max) {
 }
 
 function sendData(newBody){
-  //  console.log((new Date()) + " sending new data");
+    //  console.log((new Date()) + " sending new data");
     let data = JSON.stringify(newBody);
     socket.emit('message', data);
 
