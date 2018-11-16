@@ -1,6 +1,5 @@
 "use strict";
 
-
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 
@@ -203,7 +202,7 @@ function init() {
 	// SCENE
 
 	scene = new THREE.Scene();
-	scene.fog = new THREE.Fog( 0x000000, 100, 2500 );
+	scene.fog = new THREE.Fog( 0xDDDDDD, 10, 3500 );
 
 
 
@@ -256,13 +255,13 @@ function init() {
 	// ambient lighting
 	let ambiColor = "#000309";
 	let ambientLight = new THREE.AmbientLight(ambiColor);
-	scene.add(ambientLight);
+	// scene.add(ambientLight);
 
 	// point lighting
 	let pointColor = "#2711ca";
 	pointLight = new THREE.PointLight(pointColor);
 	pointLight.distance = 1000;
-	scene.add(pointLight);
+	// scene.add(pointLight);
 
 	// point lighting2
 	// let color = "#ffffff";
@@ -327,7 +326,6 @@ function init() {
 
 function animate() {
 	time = performance.now();
-
 	frameCount ++;
 
 	requestAnimationFrame( animate );
@@ -352,6 +350,7 @@ function render() {
 
     if(performance.now() - receivedData > 500){
 		newData = [];
+
 	}
 
 	updateBodyData();
@@ -384,6 +383,8 @@ function onSendData(data){
 
 	newData = [];
 
+	console.log("length of received data" + data.length);
+
 	if ( data != null ){
 		for ( let i = 0 ; i < data.length; i++) {
 			newData[i] = JSON.parse(data[i]);
@@ -392,8 +393,7 @@ function onSendData(data){
 
 	receivedData = performance.now();
 
-
-    //console.log("Receive data of length: " + newData.length);
+    console.log(" length of saved data " + newData.length);
 
 }
 

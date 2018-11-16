@@ -15,13 +15,13 @@ function createBody( id ) {
 
 	// POSITION
 	body.position = new THREE.Vector3(
-		Math.random() * 2000 - 1000,
+		Math.random() * 2400 - 1200,
 		-300,
 		Math.random() * -1000 - 300
 	);
 
 	// SCALE
-	body.scale = 0.5 + Math.random() * 2.0;
+	body.scale = 1.2 + Math.random() * 2.0;
 
 	// LIGHT
 	let hue = Math.floor(Math.random() * 360);
@@ -31,10 +31,10 @@ function createBody( id ) {
 		let variation = 100;
 		let hueVariation = Math.floor(hue + Math.random() * variation - variation/2) % 360;
 		let color = new THREE.Color( "hsl( " + hueVariation + ", 100%, 50%)" );
-		let light = new THREE.PointLight( color, 0.05 );
+		let light = new THREE.PointLight( color, 0.01 );
 		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
 		body.lights.push( light );
-		body.group.add( light );
+		// body.group.add( light );
 	}
 
 
@@ -283,41 +283,64 @@ function updateBodies() {
 
 		// update interaction
 
-		// for ( let otherIndex = bodies.length-1; otherIndex >= 0; otherIndex-- ) {
-		// 	if (bodyIndex == otherIndex) continue;
-		//
-		// 	let otherBody = bodies[otherIndex];
-		// 	//BODY.CHEST
-		// 	//BODY.HEAD
-		// 	//BODY.HAND_RIGHT
-		// 	//BODY.HAND_LEFT
-		//
-		// 	// hand
-		// 	let handState
-		// 	for (let handIndex = 0; handIndex < 2; handIndex++) {
-		//
-		// 		let hand;
-		// 		if (handIndex == 0) hand = body.joints.particles[BODY.HAND_LEFT];
-		// 		else if (handIndex == 1) hand = body.joints.particles[BODY.HAND_RIGHT];
-		//
-		// 		for (let otherHandIndex = 0; otherHandIndex < 2; otherHandIndex++) {
-		// 			let otherHand;
-		// 			if (otherHandIndex == 0) otherHand = otherBody.joints.particles[BODY.HAND_LEFT];
-		// 			else if (otherHandIndex == 1) otherHand = otherBody.joints.particles[BODY.HAND_RIGHT];
-		//
-		// 			let distance = hand.distanceTo.otherHand;
-		// 			if (distance < 20) {
-		//
-		//
-		// 			}
-		//
-		// 		}
-		// 	}
-		// }
+		for ( let otherIndex = bodies.length-1; otherIndex >= 0; otherIndex-- ) {
+			if (bodyIndex == otherIndex) continue;
 
+			let otherBody = bodies[otherIndex];
+			//BODY.CHEST
+			//BODY.HEAD
+			//BODY.HAND_RIGHT
+			//BODY.HAND_LEFT
 
+			// bodypart
+			let part, otherPart;
+			for (let thisBodyPartIndex = 0; thisBodyPartIndex < 4; thisBodyPartIndex++) {
 
+				switch (thisBodyPartIndex) {
+					case 0:
+					part = body.joints.particles[BODY.HAND_LEFT].pos;
+					break;
+					case 1:
+					part = body.joints.particles[BODY.HAND_RIGHT].pos;
+					break;
+					case 2:
+					part = body.joints.particles[BODY.HEAD].pos;
+					break;
+					case 3:
+					part = body.joints.particles[BODY.CHEST].pos;
+					break;
+				}
 
+				for (let otherBodyPartIndex = 0; otherBodyPartIndex < 4; otherBodyPartIndex++) {
+
+					switch (otherBodyPartIndex) {
+						case 0:
+						otherPart = otherBody.joints.particles[BODY.HAND_LEFT].pos;
+						break;
+						case 1:
+						otherPart = otherBody.joints.particles[BODY.HAND_RIGHT].pos;
+						break;
+						case 2:
+						otherPart = otherBody.joints.particles[BODY.HEAD].pos;
+						break;
+						case 3:
+						otherPart = otherBody.joints.particles[BODY.CHEST].pos;
+						break;
+					}
+
+					let distance = part.distanceTo( otherPart );
+					if (distance < 50) {
+						body.partStates[thisBodyPartIndex] = true;
+						otherBody.partStates[otherBodyPartIndex] = true;
+						// console.log( thisBodyPartIndex + " " + otherBodyPartIndex);
+					} else {
+						body.partStates[thisBodyPartIndex] = false;
+						otherBody.partStates[otherBodyPartIndex] = false;
+					}
+
+				}
+			}
+		}
 
 
 		// body joints and point cloud update
@@ -377,7 +400,7 @@ function updateBodies() {
 			}
 
 			// size update
-			sizes[ i ] = (500 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
+			sizes[ i ] = (500 + 500 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
 
 			body.joints.mesh.geometry.attributes.position.needsUpdate = true;
 			// body.joints.mesh.geometry.attributes.color.needsUpdate = true;
@@ -403,7 +426,7 @@ function updateBodies() {
 					}
 
 					// remove too bright pixels;
-					if (r+g+b > 2.9) continue;
+					// if (r+g+b > 2.9) continue;
 					// remove error pixels (px.z range: -500 ~ 500)
 					if (bodyData.joints[i].px[pxIndex].z == -500) continue;
 
@@ -420,10 +443,11 @@ function updateBodies() {
 					let cG = body.color.g * 0.6 + Math.random() * 0.4;
 					let cB = body.color.b * 0.6 + Math.random() * 0.4;
 
-					let pct1 = Math.abs( Math.sin(time * body.colorfulFreq) );
-					let pct2 = 1.0 - pct1;
-					instanceColorAttribute.setXYZ( instanceIndex, r*pct1 + cR*pct2, g*pct1 + cG*pct2, b*pct1 + cB*pct2 );
-					// instanceColorAttribute.setXYZ( instanceIndex, r,g,b );
+					// let pct = Math.sin(time * body.colorfulFreq * 1.5) * 0.5;
+					//let pct2 = 1.0 - pct1;
+					// instanceColorAttribute.setXYZ( instanceIndex, r + pct, g + pct, b + pct );
+					// let color  = Math.random()*0.1 + 0.2
+					instanceColorAttribute.setXYZ( instanceIndex, r,g,b );
 
 					instanceLastTimeAttribute.setX( instanceIndex, time * 0.005 );
 					instanceScaleAttribute.setX( instanceIndex, body.scale * body.activity );

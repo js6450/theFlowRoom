@@ -4,19 +4,19 @@ function createFloor() {
 
   // Material
   let floorMaterial = new THREE.MeshPhysicalMaterial( {
-    color: 0xAAAAAA,
-    // emissive : 0x000000,
+    // color: 0xFFFFFF,
+    emissive : 0x333333,
     //roughness : 0.5,
     //metalness : 0.5,
-    reflectivity : 0.0,
+    // reflectivity : 0.0,
     side : THREE.DoubleSide,
     flatShading : true,
     depthTest : false,
-    transparent : true,
+    // transparent : true,
     // opacity: 1.0,
-    blending: THREE.AdditiveBlending,
+    // blending: THREE.AdditiveBlending,
     // wireframe : true,
-    map : floorTexture
+    // map : floorTexture
   } );
 
   // Geometry
@@ -42,7 +42,7 @@ function createFloor() {
     f.positions = floorGeometry.attributes.position.array;
 
     let index = 0;
-    let scale = 2.5;
+    let scale = 5 * 2.5;
     for ( let z = -WORLD_DEPTH/2 + FLOOR_PARTICLES_SPACING/2; z < WORLD_DEPTH/2; z += FLOOR_PARTICLES_SPACING ) {
       for ( let x = -WORLD_WIDTH/2 + FLOOR_PARTICLES_SPACING/2; x < WORLD_WIDTH/2; x += FLOOR_PARTICLES_SPACING ) {
 

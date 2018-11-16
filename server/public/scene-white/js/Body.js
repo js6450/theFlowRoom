@@ -11,7 +11,9 @@ class Body {
 
     this.activity = 0.0;
     this.motion = 0.0;
-    this.state = 0;
+
+    this.partStates = [false, false, false, false]; // handL, handR, head, chest
+    this.mode = 0;
     // 0: normal
     // 1: hug(chest distance)
     // 2: hand_left

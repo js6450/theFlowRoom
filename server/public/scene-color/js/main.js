@@ -1,6 +1,5 @@
 "use strict";
 
-
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 
@@ -327,7 +326,6 @@ function init() {
 
 function animate() {
 	time = performance.now();
-
 	frameCount ++;
 
 	requestAnimationFrame( animate );
@@ -352,6 +350,7 @@ function render() {
 
     if(performance.now() - receivedData > 500){
 		newData = [];
+
 	}
 
 	updateBodyData();
@@ -384,6 +383,8 @@ function onSendData(data){
 
 	newData = [];
 
+	console.log("length of received data" + data.length);
+
 	if ( data != null ){
 		for ( let i = 0 ; i < data.length; i++) {
 			newData[i] = JSON.parse(data[i]);
@@ -392,8 +393,7 @@ function onSendData(data){
 
 	receivedData = performance.now();
 
-
-    //console.log("Receive data of length: " + newData.length);
+    console.log(" length of saved data " + newData.length);
 
 }
 

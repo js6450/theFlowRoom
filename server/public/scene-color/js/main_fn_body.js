@@ -283,41 +283,64 @@ function updateBodies() {
 
 		// update interaction
 
-		// for ( let otherIndex = bodies.length-1; otherIndex >= 0; otherIndex-- ) {
-		// 	if (bodyIndex == otherIndex) continue;
-		//
-		// 	let otherBody = bodies[otherIndex];
-		// 	//BODY.CHEST
-		// 	//BODY.HEAD
-		// 	//BODY.HAND_RIGHT
-		// 	//BODY.HAND_LEFT
-		//
-		// 	// hand
-		// 	let handState
-		// 	for (let handIndex = 0; handIndex < 2; handIndex++) {
-		//
-		// 		let hand;
-		// 		if (handIndex == 0) hand = body.joints.particles[BODY.HAND_LEFT];
-		// 		else if (handIndex == 1) hand = body.joints.particles[BODY.HAND_RIGHT];
-		//
-		// 		for (let otherHandIndex = 0; otherHandIndex < 2; otherHandIndex++) {
-		// 			let otherHand;
-		// 			if (otherHandIndex == 0) otherHand = otherBody.joints.particles[BODY.HAND_LEFT];
-		// 			else if (otherHandIndex == 1) otherHand = otherBody.joints.particles[BODY.HAND_RIGHT];
-		//
-		// 			let distance = hand.distanceTo.otherHand;
-		// 			if (distance < 20) {
-		//
-		//
-		// 			}
-		//
-		// 		}
-		// 	}
-		// }
+		for ( let otherIndex = bodies.length-1; otherIndex >= 0; otherIndex-- ) {
+			if (bodyIndex == otherIndex) continue;
 
+			let otherBody = bodies[otherIndex];
+			//BODY.CHEST
+			//BODY.HEAD
+			//BODY.HAND_RIGHT
+			//BODY.HAND_LEFT
 
+			// bodypart
+			let part, otherPart;
+			for (let thisBodyPartIndex = 0; thisBodyPartIndex < 4; thisBodyPartIndex++) {
 
+				switch (thisBodyPartIndex) {
+					case 0:
+					part = body.joints.particles[BODY.HAND_LEFT].pos;
+					break;
+					case 1:
+					part = body.joints.particles[BODY.HAND_RIGHT].pos;
+					break;
+					case 2:
+					part = body.joints.particles[BODY.HEAD].pos;
+					break;
+					case 3:
+					part = body.joints.particles[BODY.CHEST].pos;
+					break;
+				}
 
+				for (let otherBodyPartIndex = 0; otherBodyPartIndex < 4; otherBodyPartIndex++) {
+
+					switch (otherBodyPartIndex) {
+						case 0:
+						otherPart = otherBody.joints.particles[BODY.HAND_LEFT].pos;
+						break;
+						case 1:
+						otherPart = otherBody.joints.particles[BODY.HAND_RIGHT].pos;
+						break;
+						case 2:
+						otherPart = otherBody.joints.particles[BODY.HEAD].pos;
+						break;
+						case 3:
+						otherPart = otherBody.joints.particles[BODY.CHEST].pos;
+						break;
+					}
+
+					let distance = part.distanceTo( otherPart );
+					if (distance < 50) {
+						body.partStates[thisBodyPartIndex] = true;
+						otherBody.partStates[otherBodyPartIndex] = true;
+						// console.log( thisBodyPartIndex + " " + otherBodyPartIndex);
+					} else {
+						body.partStates[thisBodyPartIndex] = false;
+						otherBody.partStates[otherBodyPartIndex] = false;
+					}
+
+				}
+			}
+		}
 
 
 		// body joints and point cloud update
