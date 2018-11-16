@@ -1,7 +1,7 @@
 let audioNum = 5;
 let audioNodes = [];
 
-let audioRoot = "audio/";
+let audioRoot = "../audio/";
 
 initAudioNodes();
 

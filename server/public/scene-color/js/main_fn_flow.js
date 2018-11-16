@@ -16,7 +16,7 @@ function createFlow() {
   } );
 
   let uniforms = {
-    texture: { value: textureLoader.load( "img/spark.png" ) },
+    texture: { value: textureLoader.load( "../img/spark.png" ) },
     time: { value: 0.0 }
   };
   flowParticleMaterial = new THREE.ShaderMaterial( {

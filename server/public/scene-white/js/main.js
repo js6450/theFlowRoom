@@ -166,17 +166,17 @@ function init() {
 
 	// TEXTURES
 
-	floorTexture = textureLoader.load( "img/texture_dots.jpg" );
+	floorTexture = textureLoader.load( "../img/texture_dots.jpg" );
 	floorTexture.wrapS = THREE.RepeatWrapping;
 	floorTexture.wrapT = THREE.RepeatWrapping;
 	floorTexture.repeat.set( 6, 6 );
 
-	flowTexture = textureLoader.load( "img/texture_dots.jpg" );
+	flowTexture = textureLoader.load( "../img/texture_dots.jpg" );
 	flowTexture.wrapS = THREE.RepeatWrapping; //MirroredRepeatWrapping;
 	flowTexture.wrapT = THREE.RepeatWrapping; //MirroredRepeatWrapping;
 	flowTexture.repeat.set( 10, 10 );
 
-	bodyTexture = textureLoader.load( "img/texture_flow.jpg" );
+	bodyTexture = textureLoader.load( "../img/texture_flow.jpg" );
 	bodyTexture.wrapS = THREE.MirroredRepeatWrapping;
 	bodyTexture.wrapT = THREE.MirroredRepeatWrapping;
 	bodyTexture.repeat.set( 2, 2 );
@@ -185,7 +185,7 @@ function init() {
 	// SHADERS
 
 	let uniforms = {
-		texture:   { value: textureLoader.load( "img/particle_sprite.png" ) }
+		texture:   { value: textureLoader.load( "../img/particle_sprite.png" ) }
 	};
 	bodyShaderMaterial = new THREE.ShaderMaterial( {
 		uniforms:       uniforms,
@@ -383,7 +383,7 @@ function onSendData(data){
 
 	newData = [];
 
-	console.log("length of received data" + data.length);
+	//console.log("length of received data" + data.length);
 
 	if ( data != null ){
 		for ( let i = 0 ; i < data.length; i++) {
@@ -393,7 +393,7 @@ function onSendData(data){
 
 	receivedData = performance.now();
 
-    console.log(" length of saved data " + newData.length);
+   // console.log(" length of saved data " + newData.length);
 
 }
 
