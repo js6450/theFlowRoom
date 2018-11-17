@@ -62,13 +62,15 @@ app.get('/scene-white', function(req, res){
     res.render("scene-white");
 });
 
+let receiveRate = 50;
+
 io.on('connection', function(socket){
 
     socket.on('requestData', function(){
-        //broadcastData();
         if(kinectData.length > 0){
             socket.emit('sendData', kinectData);
         }
+        //broadcastData();
     });
 
     // function broadcastData(){
@@ -140,7 +142,6 @@ io.on('connection', function(socket){
             // }
         }
     });
-
 
     socket.on('sendLog', function(data){
         console.log(data);

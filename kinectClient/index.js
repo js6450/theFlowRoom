@@ -56,7 +56,7 @@ function init(){
 
 init();
 
-socket.on('connect', function(socket){
+socket.on('connect', function(s){
     console.log("Connection made to " + addr);
 
     setConnection();
@@ -72,10 +72,12 @@ socket.on('connect', function(socket){
             console.log("Total data length: " + skeletonData.length);
         });
 
-        sendSavedData();
+       sendSavedData();
     }
 
 });
+
+
 
 socket.on('disconnect', function(socket){
     console.log('Socket with ' + socket.id + ' disconnected');
@@ -123,6 +125,8 @@ let depthData = [];
 let colorData = [];
 let bodyFrame = [];
 
+let newBody = [];
+
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
     rawDepth = true;
@@ -145,12 +149,12 @@ function startSkeletonTracking() {
             bodyFrame = frame.body.bodies;
 
             let index = 0;
-            let newBody = [];
+            newBody = [];
 
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {
-                    if (body.tracked && newBody.length < bodyNumMax) {
+                    if (body.tracked) {
 
                         //console.log((new Date()) + ' body tracked!!');
                         // console.log((new Date()) + " body available: " + bodyAvailable);
@@ -185,9 +189,9 @@ function startSkeletonTracking() {
                     //console.log("Total number of bodies detected: " + bodyCount);
                 }
 
-                if(newBody != null){
-                    sendData(newBody);
-                }
+                // if(newBody != null){
+                //     sendData(newBody);
+                // }
             }
 
             busy = false;
@@ -301,26 +305,38 @@ function map (num, in_min, in_max, out_min, out_max) {
     return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+
+
+let lastSend = 0;
+let sendInterval = 100;
 function sendData(newBody){
+
   //  console.log((new Date()) + " sending new data");
-    let data = JSON.stringify(newBody);
-    socket.emit('message', data);
+    if(new Date.now() - lastSend > sendInterval){
+        let data = JSON.stringify(newBody);
+        socket.emit('message', data);
 
-    if(saveFeed && data != "[]"){
+        if(saveFeed && data != "[]"){
 
-        if(firstData){
-            firstData = false;
-        }else{
-            data = ", " + data;
+            if(firstData){
+                firstData = false;
+            }else{
+                data = ", " + data;
+            }
+
+            fs.appendFile(dataDest, data, 'utf8', function(err){
+                if(err){
+                    return console.log(err);
+                }
+            });
         }
 
-        fs.appendFile(dataDest, data, 'utf8', function(err){
-            if(err){
-                return console.log(err);
-            }
-        });
+        lastSend = new Date.now();
     }
+
 }
+
+
 
 /*
 Prep data for sending saved JSON data
@@ -328,7 +344,8 @@ Prep data for sending saved JSON data
 
 function sendSavedData(){
     if(socket.connected){
-        //console.log(dataIndex);
+
+        console.log(dataIndex);
         let currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
@@ -338,6 +355,6 @@ function sendSavedData(){
             dataIndex = 0;
         }
 
-        setTimeout(sendSavedData, 50);
+        setTimeout(sendSavedData, sendInterval);
     }
 }

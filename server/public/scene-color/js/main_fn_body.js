@@ -261,7 +261,7 @@ function updateBodies() {
 			}
 		}
 		// decay
-		body.updateActivity( -0.005 );
+		body.updateActivity( -0.003 );
 
 		// quantity of motion
 		body.updateMotion();

@@ -32,9 +32,8 @@ console.log("! Flow Particles: " + FLOW_PARTICLES_MAX);
 console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
 
 
-var socket = io();
-let receivedData = 0;
-let requestFrame = 1;
+let socket = io();
+let requestFrame = 10;
 
 
 // three.js main
@@ -336,21 +335,21 @@ function animate() {
 }
 
 
-
+let pingTime = 0;
+let responseTime = 0;
 function render() {
 
 	updateCameraPosition();
 	updateGlobalLight();
 
+	//requestFrame = Math.round(responseTime / 100) + 1;
+
 	if(frameCount % requestFrame == 0){
         socket.emit('requestData');
     }
 
-    //console.log(receivedData);
-
-    if(performance.now() - receivedData > 500){
+    if(performance.now() - pingTime > 50 * requestFrame){
 		newData = [];
-
 	}
 
 	updateBodyData();
@@ -381,6 +380,11 @@ function onWindowResize() {
 
 function onSendData(data){
 
+	responseTime = performance.now() - pingTime;
+	pingTime = performance.now();
+
+	//console.log(responseTime);
+
 	newData = [];
 
 	//console.log("length of received data" + data.length);
@@ -391,9 +395,7 @@ function onSendData(data){
 		}
 	}
 
-	receivedData = performance.now();
-
-    //console.log(" length of saved data " + newData.length);
+   // console.log(" length of saved data " + newData.length);
 
 }
 

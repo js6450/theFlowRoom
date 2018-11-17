@@ -32,8 +32,8 @@ console.log("! Flow Particles: " + FLOW_PARTICLES_MAX);
 console.log("! Floor Particles: " + FLOOR_PARTICLES_MAX);
 
 
-var socket = io();
-let requestFrame = 1;
+let socket = io();
+let requestFrame = 10;
 
 
 // three.js main
@@ -342,18 +342,13 @@ function render() {
 	updateCameraPosition();
 	updateGlobalLight();
 
-	requestFrame = Math.round(responseTime / 1000) + 1;
-
-	//console.log(requestFrame);
+	//requestFrame = Math.round(responseTime / 100) + 1;
 
 	if(frameCount % requestFrame == 0){
-		pingTime = performance.now();
         socket.emit('requestData');
     }
 
-    //console.log(receivedData);
-
-    if(performance.now() - pingTime > 100 * requestFrame){
+    if(performance.now() - pingTime > 50 * requestFrame){
 		newData = [];
 	}
 
