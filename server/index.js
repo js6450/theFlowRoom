@@ -65,36 +65,39 @@ app.get('/scene-white', function(req, res){
 io.on('connection', function(socket){
 
     socket.on('requestData', function(){
-        broadcastData();
+        //broadcastData();
+        if(kinectData.length > 0){
+            socket.emit('sendData', kinectData);
+        }
     });
 
-    function broadcastData(){
-        if(socket.connected){
+    // function broadcastData(){
+    //     if(socket.connected){
+    //
+    //         if(kinectData.length > 0){
+    //             //console.log('broadcasting data of ' + kinectData.length + " length");
+    //             socket.emit('sendData', kinectData);
+    //             //kinectData = [];
+    //         }
+    //
+    //         // if(clearData){
+    //         //     if(clientDataCleared < clientTotal){
+    //         //         console.log('clear data of device index ' + clearedDeviceIndex);
+    //         //
+    //         //         socket.emit('statusChange', clearedDeviceIndex);
+    //         //     }else{
+    //         //         console.log("reset data clear values");
+    //         //         console.log("in reset: cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
+    //         //
+    //         //         clientDataCleared = 0;
+    //         //         clearData = false;
+    //         //     }
+    //         //
+    //         // }
+    //     }
+    // }
 
-            if(kinectData.length > 0){
-                //console.log('broadcasting data of ' + kinectData.length + " length");
-                socket.emit('sendData', kinectData);
-                //kinectData = [];
-            }
-
-            // if(clearData){
-            //     if(clientDataCleared < clientTotal){
-            //         console.log('clear data of device index ' + clearedDeviceIndex);
-            //
-            //         socket.emit('statusChange', clearedDeviceIndex);
-            //     }else{
-            //         console.log("reset data clear values");
-            //         console.log("in reset: cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
-            //
-            //         clientDataCleared = 0;
-            //         clearData = false;
-            //     }
-            //
-            // }
-        }
-    }
-
-    broadcastData();
+    //broadcastData();
     //
     // socket.on('dataCleared', function(data){
     //     if(data == 1 && clearData){
@@ -137,6 +140,7 @@ io.on('connection', function(socket){
             // }
         }
     });
+
 
     socket.on('sendLog', function(data){
         console.log(data);

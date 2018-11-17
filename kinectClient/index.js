@@ -116,6 +116,7 @@ let sendAllBodies = false;
 let rawDepth = false;
 
 let bodyCount = 0;
+let bodyNumMax = 3;
 
 let jointCoords = [];
 let depthData = [];
@@ -149,7 +150,7 @@ function startSkeletonTracking() {
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {
-                    if (body.tracked) {
+                    if (body.tracked && newBody.length < bodyNumMax) {
 
                         //console.log((new Date()) + ' body tracked!!');
                         // console.log((new Date()) + " body available: " + bodyAvailable);
@@ -180,7 +181,8 @@ function startSkeletonTracking() {
                 if(bodyCount != index){
                     bodyCount = index;
 
-                    console.log("Total number of bodies detected: " + bodyCount);
+
+                    //console.log("Total number of bodies detected: " + bodyCount);
                 }
 
                 if(newBody != null){
