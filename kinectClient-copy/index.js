@@ -48,9 +48,9 @@ function init(){
     }
 
     if(saveFeed){
-        dataDest += Date.now() + ".json";
+       dataDest += Date.now() + ".json";
 
-        console.log("Saving data to " + dataDest);
+       console.log("Saving data to " + dataDest);
     }
 }
 
@@ -72,10 +72,12 @@ socket.on('connect', function(socket){
             console.log("Total data length: " + skeletonData.length);
         });
 
-        sendSavedData();
+       sendSavedData();
     }
 
 });
+
+
 
 socket.on('disconnect', function(socket){
     console.log('Socket with ' + socket.id + ' disconnected');
@@ -116,11 +118,14 @@ let sendAllBodies = false;
 let rawDepth = false;
 
 let bodyCount = 0;
+let bodyNumMax = 2;
 
 let jointCoords = [];
 let depthData = [];
 let colorData = [];
 let bodyFrame = [];
+
+let newBody = [];
 
 function startSkeletonTracking() {
     console.log('Starting skeleton tracking');
@@ -144,36 +149,41 @@ function startSkeletonTracking() {
             bodyFrame = frame.body.bodies;
 
             let index = 0;
-            let newBody = [];
+            newBody = [];
 
             if(bodyFrame.length > 0){
                 //console.log("there is body");
                 bodyFrame.forEach(function (body) {
                     if (body.tracked) {
 
-                        //console.log((new Date()) + ' body tracked!!');
-                        // console.log((new Date()) + " body available: " + bodyAvailable);
+                        if(newBody.length < bodyNumMax){
 
-                        jointCoords = calcJointCoords(body.joints);
+                            //console.log((new Date()) + ' body tracked!!');
+                            // console.log((new Date()) + " body available: " + bodyAvailable);
 
-                        if (!sendAllBodies) {
-                            getDataForJSON(jointCoords, depthData, colorData);
+                            jointCoords = calcJointCoords(body.joints);
 
-                            let h = (new Date()).getHours();
-                            let m = (new Date()).getMinutes();
-                            let s = (new Date()).getSeconds();
+                            if (!sendAllBodies) {
+                                getDataForJSON(jointCoords, depthData, colorData);
 
-                            newBody.push({
-                                "sid": socket.id,
-                                "time": h + "-" + m + "-" + s,
-                                "bodyIndex": body.bodyIndex,
-                                "trackingId": body.trackingId,
-                                "leftHandState": body.leftHandState,
-                                "rightHandState": body.rightHandState,
-                                "joints": jointCoords
-                            });
+                                let h = (new Date()).getHours();
+                                let m = (new Date()).getMinutes();
+                                let s = (new Date()).getSeconds();
+
+                                newBody.push({
+                                    "sid": socket.id,
+                                    "time": h + "-" + m + "-" + s,
+                                    "bodyIndex": body.bodyIndex,
+                                    "trackingId": body.trackingId,
+                                    "leftHandState": body.leftHandState,
+                                    "rightHandState": body.rightHandState,
+                                    "joints": jointCoords
+                                });
+                            }
+                            index++;
+
                         }
-                        index++;
+
                     }
                 });
 
@@ -184,6 +194,8 @@ function startSkeletonTracking() {
                 }
 
                 if(newBody != null){
+                   //console.log("Total number of bodies detected: " + bodyCount);
+
                     sendData(newBody);
                 }
             }
@@ -200,7 +212,7 @@ function startSkeletonTracking() {
 
 function stopSkeletonTracking() {
     console.log('stopping skeleton');
-    // kinect.closeBodyReader();
+   // kinect.closeBodyReader();
     kinect.removeAllListeners();
 
     //kinect.closeRawDepthReader();
@@ -299,26 +311,38 @@ function map (num, in_min, in_max, out_min, out_max) {
     return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+
+
+let lastSend = 0;
+let sendInterval = 50;
 function sendData(newBody){
-    //  console.log((new Date()) + " sending new data");
-    let data = JSON.stringify(newBody);
-    socket.emit('message', data);
+  //  console.log((new Date()) + " sending new data");
+   if(Date.now() - lastSend > sendInterval) {
+      //console.log("send body of length : " + newBody.length);
+       let data = JSON.stringify(newBody);
+       socket.emit('message', data);
 
-    if(saveFeed && data != "[]"){
+       if (saveFeed && data != "[]") {
 
-        if(firstData){
-            firstData = false;
-        }else{
-            data = ", " + data;
-        }
+           if (firstData) {
+               firstData = false;
+           } else {
+               data = ", " + data;
+           }
 
-        fs.appendFile(dataDest, data, 'utf8', function(err){
-            if(err){
-                return console.log(err);
-            }
-        });
-    }
+           fs.appendFile(dataDest, data, 'utf8', function (err) {
+               if (err) {
+                   return console.log(err);
+               }
+           });
+       }
+
+       lastSend = Date.now();
+   }
+  //
 }
+
+
 
 /*
 Prep data for sending saved JSON data
@@ -326,7 +350,8 @@ Prep data for sending saved JSON data
 
 function sendSavedData(){
     if(socket.connected){
-        //console.log(dataIndex);
+
+       // console.log(dataIndex);
         let currentData = JSON.stringify(skeletonData[dataIndex]);
         socket.emit('message', currentData);
 
@@ -336,6 +361,6 @@ function sendSavedData(){
             dataIndex = 0;
         }
 
-        setTimeout(sendSavedData, 50);
+        setTimeout(sendSavedData, sendInterval);
     }
 }

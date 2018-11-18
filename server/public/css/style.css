@@ -6,13 +6,78 @@ html, body {
 
 body {
 	color: #cccccc;
-	font-family:Monospace;
-	font-size:13px;
-	text-align:center;
+	/*font-family:Monospace;*/
+	font-size: 18px;
+	/*text-align:center;*/
 	background-color: #050505;
 	overflow: hidden;
 }
 
-a {
+@font-face {
+	font-family: Gilbert;
+	src: url("Gilbert.otf");
+}
+
+@font-face {
+	font-family: PT-Sans;
+	src: url("Pt_Sans.ttf");
+}
+
+#container{
+	width: 100%;
+	height: 100%;
+	/*margin: auto;*/
+	/*margin-top: 10vh;*/
+
+	background: url(../img/hand.png) no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+.text-div{
+	font-family: "Gilbert", sans-serif;
+	text-align: left;
+	padding-top: calc(50vh - 8em);
+	padding-left: 5em;
+}
+
+.title{
+	font-size: 4.8em;
+	margin-bottom: 0em;
+}
+
+.artists{
+}
+
+.btn-div{
+	padding-left: 5em;
+	padding-top: 3em;
+}
+
+.btn{
 	color: white;
+	text-decoration: none;
+	font-size: 1em;
+	font-family: "PT-Sans", sans-serif;
+	margin-right: 1em;
+	border: white solid 1px;
+	border-radius: 5px;
+	padding: 0.5em;
+}
+
+.btn:hover{
+	background: white;
+	color: black;
+
+	transition: background 0.5s, color 0.5s;
+}
+
+@media (max-width: 725px){
+	body{
+		font-size: 12px;
+	}
+
+	.btn-div, .text-div{
+		padding-left: 3em;
+	}
 }

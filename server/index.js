@@ -6,17 +6,17 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
-var debug = false;
-var log_stdout = process.stdout;
+let debug = false;
+let log_stdout = process.stdout;
 
 if(debug){
-    var logName = new Date().toISOString().split('T')[0] + ".log";
+    let logName = new Date().toISOString().split('T')[0] + ".log";
 
-    var log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
+    let log_file = fs.createWriteStream('log/' + logName, {flags : 'a'});
 }
 
 console.log = function(d) { //
-    var timeStamp = new Date().toISOString();
+    let timeStamp = new Date().toISOString();
 
     if(debug){
         log_file.write(util.format(timeStamp + ": " + d) + '\n');
@@ -26,14 +26,12 @@ console.log = function(d) { //
 
 };
 
-var kinectCount = 0;
-var kinectData = [];
+let kinectCount = 0;
 
-// var clearData = false;
-// let clearedDeviceIndex;
-//
+let devices = [];
+let kinectData = [];
+
 let clientTotal = 0;
-// let clientDataCleared = 0;
 
 app.set("views", __dirname + "/views");
 app.engine(".html", require('ejs').__express);
@@ -62,51 +60,13 @@ app.get('/scene-white', function(req, res){
     res.render("scene-white");
 });
 
-let receiveRate = 50;
-
 io.on('connection', function(socket){
 
     socket.on('requestData', function(){
         if(kinectData.length > 0){
             socket.emit('sendData', kinectData);
         }
-        //broadcastData();
     });
-
-    // function broadcastData(){
-    //     if(socket.connected){
-    //
-    //         if(kinectData.length > 0){
-    //             //console.log('broadcasting data of ' + kinectData.length + " length");
-    //             socket.emit('sendData', kinectData);
-    //             //kinectData = [];
-    //         }
-    //
-    //         // if(clearData){
-    //         //     if(clientDataCleared < clientTotal){
-    //         //         console.log('clear data of device index ' + clearedDeviceIndex);
-    //         //
-    //         //         socket.emit('statusChange', clearedDeviceIndex);
-    //         //     }else{
-    //         //         console.log("reset data clear values");
-    //         //         console.log("in reset: cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
-    //         //
-    //         //         clientDataCleared = 0;
-    //         //         clearData = false;
-    //         //     }
-    //         //
-    //         // }
-    //     }
-    // }
-
-    //broadcastData();
-    //
-    // socket.on('dataCleared', function(data){
-    //     if(data == 1 && clearData){
-    //         clientDataCleared++;
-    //         console.log("data cleared");
-    //     }
-    // });
 
     socket.on('status', function(data){
         //status 0: kinect connection
@@ -116,56 +76,46 @@ io.on('connection', function(socket){
         console.log("User of type " + socket.userType + " with id " + socket.id + " connected");
 
         if(socket.userType == 0){
-            socket.kinectIndex = kinectCount;
-            kinectCount++;
 
-            console.log("Current number of kinect clients connected: " + kinectCount);
+            if(!devices.includes(socket.id)){
+                devices.push(socket.id);
+
+                kinectCount++;
+            }
         }else if(socket.userType == 1){
             clientTotal++;
-
-            console.log("Current number of web clients connected: " + clientTotal);
         }
+
+        console.log("No of devices: " + kinectCount + ", No of web clients: " + clientTotal);
 
     });
 
     socket.on('message', function(data){
 
         if(socket.userType == 0){
-            kinectData[socket.kinectIndex] = data;
-
-            // if(debug){
-            //     fs.writeFile(dest, data, 'utf8', function(err){
-            //         if(err){
-            //             return console.log(err);
-            //         }
-            //     });
-            // }
+            //console.log("data from " + socket.id);
+            kinectData[devices.indexOf(socket.id)] = data;
         }
-    });
-
-    socket.on('sendLog', function(data){
-        console.log(data);
     });
 
     socket.on('disconnect', function(){
 
         if(socket.userType == 0){
 
-            // clearData = true;
-            // clearedDeviceIndex = socket.kinectIndex;
-
-            kinectData.splice(socket.kinectIndex, 1);
+            kinectData.splice(devices.indexOf(socket.id), 1);
             kinectCount--;
 
-            // console.log("cleardata: " + clearData + ', client total: ' + clientTotal + ", client data cleared: " + clientDataCleared);
-            console.log("splice kinectData array, now array length: " + kinectData.length);
+            devices.splice(devices.indexOf(socket.id), 1);
+
+            console.log("devices array splice, now: " + devices.length);
+            console.log("kinect data array splice, now: " + kinectData.length);
 
         }else if(socket.userType == 1){
             clientTotal--;
-            console.log("client total: " + clientTotal);
         }
 
-       console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
+        console.log("No of devices: " + kinectCount + ", No of web clients: " + clientTotal);
+        console.log("User of type " + socket.userType + " with id " + socket.id + " disconnected");
     });
 
 });
