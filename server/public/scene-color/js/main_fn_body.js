@@ -10,28 +10,38 @@ const BODY = {
 	FOOT_RIGHT : 19
 }
 
+const BODY_X_POSITIONS = [
+	-150, 150,
+	-450, 450,
+	-750, 750,
+	-1050, 1050
+];
+//let bodyXPositionIndex = 0;
+
 function createBody( id ) {
 	let body = new Body( id );
 
 	// POSITION
 	body.position = new THREE.Vector3(
-		Math.random() * 2000 - 1000,
+		BODY_X_POSITIONS[bodies.length] + Math.random() * 100 - 50,
 		-300,
-		Math.random() * -1000 - 300
+		-300 + Math.random() * -100
 	);
 
 	// SCALE
-	body.scale = 0.5 + Math.random() * 2.0;
+	body.scale = 1.0 + Math.random() * 1.0;
 
 	// LIGHT
 	let hue = Math.floor(Math.random() * 360);
-	body.color = new THREE.Color( "hsl( " + hue + ", 100%, 50%)" );
+	let sat = 100;
+	let bri = 50;
+	body.color = new THREE.Color( "hsl( " + hue + ", " + sat + "%, " + bri + "%)" );
 
 	for (let i = 0; i < 6; i++) {
 		let variation = 100;
-		let hueVariation = Math.floor(hue + Math.random() * variation - variation/2) % 360;
-		let color = new THREE.Color( "hsl( " + hueVariation + ", 100%, 50%)" );
-		let light = new THREE.PointLight( color, 0.05 );
+		let hueVariation = THREE.Math.clamp(Math.floor(hue + Math.random() * variation - variation/2) % 360, 0, 360);
+		let color = new THREE.Color( "hsl( " + hueVariation + ", " + sat + "%, " + bri + "%)" );
+		let light = new THREE.PointLight( color, 0.01 );
 		// PointLight( color : Integer, intensity : Float, distance : Number, decay : Float )
 		body.lights.push( light );
 		body.group.add( light );
@@ -180,7 +190,7 @@ function createBodyPointCloud() {
 	geometry.addAttribute( 'decaySpeed', new THREE.InstancedBufferAttribute( new Float32Array( instDecaySpeed ), 1 ) );
 
 	// material
-	var material = new THREE.RawShaderMaterial( {
+	let material = new THREE.RawShaderMaterial( {
 		uniforms: {
 			time: { value: 0.0 }
 		},
@@ -198,20 +208,33 @@ function createBodyPointCloud() {
 }
 
 
-let newDataIndexArray;
+
 function updateBodyData() {
 
-	if (newData == null) {
+	if (allData == null) {
 		console.log("null newData array");
 		return;
-    }
+	}
+
+	let currData = allData[ allDataIndex ];
+	// console.log(allDataIndex);
+	allDataIndex += allDataIndexDirection;
+	if (allDataIndex < 0) {
+		allDataIndex = 0;
+		allDataIndexDirection *= -1;
+	} else if (allDataIndex == allData.length) {
+		allDataIndex = allData.length - 1;
+		allDataIndexDirection *= -1;
+	}
+
+	if (currData == undefined) return;
 
 	// update body data with the steaming data
 	bodyDataObjs = [];
-	for ( let newDataIndex = 0 ; newDataIndex < newData.length; newDataIndex++) {
-        newDataIndexArray = newData[newDataIndex];
-		let data = newData[newDataIndex];
-		if(data == null){
+	for ( let dataIndex = 0 ; dataIndex < currData.length; dataIndex++) {
+		dataIndexArray = currData[dataIndex];
+		let data = currData[dataIndex];
+		if (data == null) {
 			console.log("null data index");
 			return;
 		}
@@ -266,6 +289,9 @@ function updateBodies() {
 		// quantity of motion
 		body.updateMotion();
 
+		// sound
+		body.updateSound( camera.position );
+
 		// remove if it's done
 		if (body.activity <= 0.0) {
 			scene.remove( body.group );
@@ -277,8 +303,6 @@ function updateBodies() {
 		for (let li = 0; li < body.lights.length; li++) {
 			body.lights[li].intensity = 0.05 * body.activity;
 		}
-
-
 
 
 		// update interaction
@@ -329,10 +353,11 @@ function updateBodies() {
 					}
 
 					let distance = part.distanceTo( otherPart );
-					if (distance < 50) {
+					if (distance < ui.interactionDistance) {
 						body.partStates[thisBodyPartIndex] = true;
 						otherBody.partStates[otherBodyPartIndex] = true;
-						// console.log( thisBodyPartIndex + " " + otherBodyPartIndex);
+						body.otherColor = otherBody.color.clone();
+						otherBody.otherColor = body.color.clone();
 					} else {
 						body.partStates[thisBodyPartIndex] = false;
 						otherBody.partStates[otherBodyPartIndex] = false;
@@ -341,7 +366,16 @@ function updateBodies() {
 				}
 			}
 		}
+		// update interaction states
+		if (ui.bodyState >= 0) {
+			body.state = ui.bodyState;
+		} else {
+			body.updateState();
+		}
+		//if (bodyIndex == 0) body.state = 0; // just to test
+		body.applyState();
 
+		// DISPLAY BODY
 
 		// body joints and point cloud update
 		if (bodyData == undefined) continue;
@@ -349,27 +383,42 @@ function updateBodies() {
 		let prevPxIndex = 0;
 		for ( let i = 0; i < bodyData.joints.length; i ++ ) {
 
-			let scaledX = body.scale * (bodyData.joints[i].x + BODY_POS_OFFSET_X);
-			let scaledY = body.scale * (bodyData.joints[i].y + BODY_POS_OFFSET_Y) * -1;
-			let scaledZ = body.scale * bodyData.joints[i].z * DEPTH_SCALING;
+			let newIndex;
+			switch (body.state) {
+				case 0: // normal
+				case 4: // hug
+				newIndex = i;
+				break;
+				case 1:
+				newIndex = BODY.HAND_LEFT;
+				break;
+				case 2:
+				newIndex = BODY.HAND_RIGHT;
+				break;
+				case 3: // both hands
+				if (i%2 == 0) newIndex = BODY.HAND_LEFT;
+				else newIndex = BODY.HAND_RIGHT;
+				break;
+			}
+
+			let scaledX = body.scale * (bodyData.joints[newIndex].x + BODY_POS_OFFSET_X);
+			let scaledY = body.scale * (bodyData.joints[newIndex].y + BODY_POS_OFFSET_Y) * -1;
+			let scaledZ = body.scale * bodyData.joints[newIndex].z * DEPTH_SCALING;
+
 			let destX = body.position.x + scaledX;
 			let destY = body.position.y + scaledY;
 			let destZ = body.position.z + scaledZ;
 
-			var sizes = body.joints.mesh.geometry.attributes.size.array;
+			let sizes = body.joints.mesh.geometry.attributes.size.array;
 
 			let p = body.joints.particles[i];
-
 			p.attractedTo( new THREE.Vector3( destX, destY, destZ ), 0.1 );
 			p.update();
 			p.applyDamping( 0.98 );
 
-			body.joints.positions[ i * 3     ] = p.pos.x;// = destX;
-			body.joints.positions[ i * 3 + 1 ] = p.pos.y;// = destY;
-			body.joints.positions[ i * 3 + 2 ] = p.pos.z;// = destZ;
-			// bodies[bodyIndex].joints.colors[ i * 3     ] = 255;
-			// bodies[bodyIndex].joints.colors[ i * 3 + 1 ] = 0;
-			// bodies[bodyIndex].joints.colors[ i * 3 + 2 ] = 0;
+			body.joints.positions[ i * 3     ] = p.pos.x;
+			body.joints.positions[ i * 3 + 1 ] = p.pos.y;
+			body.joints.positions[ i * 3 + 2 ] = p.pos.z;
 
 			// update light positions
 			let lightIndex;
@@ -400,7 +449,7 @@ function updateBodies() {
 			}
 
 			// size update
-			sizes[ i ] = (500 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
+			sizes[ i ] = (500 + 500 + Math.sin( 0.01 * i + time * p.sizeVariation ) * 1000 ) * body.scale * body.activity;
 
 			body.joints.mesh.geometry.attributes.position.needsUpdate = true;
 			// body.joints.mesh.geometry.attributes.color.needsUpdate = true;
@@ -426,7 +475,7 @@ function updateBodies() {
 					}
 
 					// remove too bright pixels;
-					if (r+g+b > 2.9) continue;
+					// if (r+g+b > 2.9) continue;
 					// remove error pixels (px.z range: -500 ~ 500)
 					if (bodyData.joints[i].px[pxIndex].z == -500) continue;
 
@@ -443,10 +492,35 @@ function updateBodies() {
 					let cG = body.color.g * 0.6 + Math.random() * 0.4;
 					let cB = body.color.b * 0.6 + Math.random() * 0.4;
 
-					let pct1 = Math.abs( Math.sin(time * body.colorfulFreq) );
-					let pct2 = 1.0 - pct1;
-					instanceColorAttribute.setXYZ( instanceIndex, r*pct1 + cR*pct2, g*pct1 + cG*pct2, b*pct1 + cB*pct2 );
-					// instanceColorAttribute.setXYZ( instanceIndex, r,g,b );
+					let newR, newG, newB;
+					if (body.state <= 3) {
+						let p = body.colorChange;
+						let pInvert = 1.0 - body.colorChange;
+						newR = cR * p + r * pInvert;
+						newG = cG * p + g * pInvert;
+						newB = cB * p + b * pInvert;
+					}
+					else if (body.state == 4) {
+						// let otherColors = [];
+						// for (let bIndex = 0; bIndex<bodies.length; bIndex++) {
+						// 	let tBody = bodies[bIndex];
+						// 	if (tBody.state == 4) {
+						// 		otherColors.push( tBody.color.clone() );
+						// 	}
+						// }
+						// let rndIndex = Math.floor( Math.random(2) );
+						let tColor;
+						if (Math.random() < 0.5) {
+							tColor = body.color;
+						} else {
+							tColor = body.otherColor;
+						}
+						newR = tColor.r * 0.6 + Math.random() * 0.4;
+						newG = tColor.g * 0.6 + Math.random() * 0.4;
+						newB = tColor.b * 0.6 + Math.random() * 0.4;
+					}
+					instanceColorAttribute.setXYZ( instanceIndex, newR, newG, newB );
+
 
 					instanceLastTimeAttribute.setX( instanceIndex, time * 0.005 );
 					instanceScaleAttribute.setX( instanceIndex, body.scale * body.activity );

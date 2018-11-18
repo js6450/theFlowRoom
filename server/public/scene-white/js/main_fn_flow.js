@@ -1,23 +1,5 @@
 function createFlow() {
 
-  // Flow Particle Buffer
-
-  // Material
-  let uniforms = {
-    texture: { value: textureLoader.load( "../img/spark.png" ) },
-    time: { value: 0.0 }
-  };
-  flowParticleMaterial = new THREE.ShaderMaterial( {
-    uniforms:       uniforms,
-    vertexShader:   ShaderLoader.get( "flowParticle_vert" ),
-    fragmentShader: ShaderLoader.get( "flowParticle_frag" ),
-    blending:       THREE.AdditiveBlending,
-    depthTest:      false,
-    transparent:    true,
-    vertexColors:   true
-  } );
-
-
   // Geometry
   flow = new ParticleBuffer( FLOW_PARTICLES_MAX );
   let flowGeometry = new THREE.BufferGeometry();

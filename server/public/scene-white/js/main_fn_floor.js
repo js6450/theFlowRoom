@@ -9,7 +9,7 @@ function createFloor() {
     //roughness : 0.5,
     //metalness : 0.5,
     // reflectivity : 0.0,
-    side : THREE.DoubleSide,
+    // side : THREE.DoubleSide,
     flatShading : true,
     depthTest : false,
     // transparent : true,

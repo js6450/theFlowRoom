@@ -1,68 +1,68 @@
 class AudioNode{
 
-    constructor(fileName){
-        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  constructor(fileName){
+    this.element = document.createElement('audio');
+    document.body.appendChild(this.element)
+    this.element.src = audioRoot + fileName + audioExtension;
+    this.element.preload = true;
+  }
 
-        this.audioElement = document.createElement('audio');
-        this.audioElement.id = fileName;
 
-        document.body.appendChild(this.audioElement);
-
-        this.audioElement.src = audioRoot + fileName + ".wav";
-
-        this.audioSource = this.audioCtx.createMediaElementSource(this.audioElement);
-
-        this.pannerNode = this.audioCtx.createPanner();
-        this.pannerNode.panningModel = 'HRTF';
-
-        this.gainNode = this.audioCtx.createGain();
-        this.gainNode.gain.value = 1;
-
-        this.audioSource.connect(this.pannerNode);
-        this.pannerNode.connect(this.gainNode);
-        this.gainNode.connect(this.audioCtx.destination);
+  async play(){
+    try{
+      await this.element.play();
+    }catch(err){
+      console.log(err);
     }
+  }
 
+  pause(){
+    this.element.pause();
+  }
 
-    async play(){
-        try{
-            await this.audioElement.play();
-        }catch(err){
-            console.log(err);
-        }
+  stop(){
+    this.element.pause();
+    this.element.currentTime = 0;
+  }
+
+  loop(){
+    this.element.loop = true;
+  }
+
+  noLoop(){
+    this.element.loop = false;
+  }
+
+  setPosition(t) {
+    this.element.currentTime = t;
+  }
+
+  getPosition() {
+    return this.element.currentTime;
+  }
+
+  getVolume() {
+    return this.element.volume;
+  }
+
+  setVolume(vol) {
+    this.element.volume = THREE.Math.clamp(vol, 0.0, 1.0);
+  }
+
+  isPlaying() {
+    if ( !this.element.paused() ) {
+      return true;
+    } else {
+      return false;
     }
+  }
 
-    pause(){
-        this.audioElement.pause();
+  isStopped() {
+    if ( this.element.paused() && this.element.currentTime == 0) {
+      return true;
+    } else {
+      return false;
     }
-
-    stop(){
-        this.audioElement.pause();
-        this.audioElement.currentTime = 0;
-    }
-
-    loop(){
-        this.audioElement.loop = true;
-    }
-
-    noLoop(){
-        this.audioElement.loop = false;
-    }
-
-    easeVolume(vol, t){
-        this.gainNode.gain.setTargetAtTime(vol, this.audioCtx.currentTime + t, 0.5);
-    }
-
-    setPan(x, y, z){
-        this.pannerNode.positionX.value = x;
-        this.pannerNode.positionY.value = y;
-        this.pannerNode.positionZ.value = z;
-    }
-
-    easePan(x, y, z, t){
-        this.pannerNode.positionX.setTargetAtTime(x, this.audioCtx.currentTime + t, 0.5);
-        this.pannerNode.positionY.setTargetAtTime(y, this.audioCtx.currentTime + t, 0.5);
-        this.pannerNode.positionZ.setTargetAtTime(z, this.audioCtx.currentTime + t, 0.5);
-    }
+  }
 
 }

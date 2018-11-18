@@ -1,7 +1,8 @@
 function updateCameraPosition() {
 	// swing
-	camera.position.applyAxisAngle( new THREE.Vector3(0, 1, 0), Math.sin(time * 0.0005)*0.0005 );
-	camera.position.applyAxisAngle( new THREE.Vector3(1, 0, 0), Math.cos(time * 0.0003)*0.0003 );
+	camera.position.applyAxisAngle( new THREE.Vector3(0, 1, 0), Math.cos(time * 0.00042)*0.0042 );
+	camera.position.applyAxisAngle( new THREE.Vector3(1, 0, 0), Math.cos(time * 0.00032)*0.0035 );
+	camera.lookAt( new THREE.Vector3(0,0,0) );
 
 	// don't let it move too far away
 	camera.position.clampLength(CAMERA_DISTANCE_MIN, CAMERA_DISTANCE_MAX);
@@ -17,6 +18,34 @@ function updateGlobalLight() {
 	pointLight.position.x = Math.cos(time * 0.0003) * WORLD_WIDTH/2;
 	pointLight.position.y = 0;
 	pointLight.position.z = Math.sin(time * 0.0003) * WORLD_DEPTH/2;
+}
+
+
+
+function getNoiseVector(x, y, z) {
+	let noiseTwist = 12;
+
+	let noiseValue = perlin.noise(
+		( x + frameCount ) / 2500,
+		( y + frameCount ) / 2500,
+		( z + frameCount ) / 2500
+		);
+
+	let vector = new THREE.Vector3( 1, 0, 0 );
+
+	let xAxis = Math.cos( frameCount * 0.5 ) * 0.5 + 0.5;
+	let yAxis = Math.sin( frameCount * 0.5 ) * 0.5 + 0.5;
+	let axis = new THREE.Vector3( xAxis, yAxis, xAxis*2 );
+	axis.normalize();
+
+	vector.applyAxisAngle( axis, Math.PI * noiseTwist * noiseValue);
+	return vector;
+}
+
+
+
+function mLerp(value, target, percent) {
+	return value + (target - value) * percent;
 }
 
 
@@ -73,31 +102,13 @@ function updateCurveExtrude( mesh, points, resolution ) {
 
 
 
-function getNoiseVector(x, y, z) {
-	let noiseTwist = 12;
 
-	let noiseValue = perlin.noise(
-		( x + frameCount ) / 2500,
-		( y + frameCount ) / 2500,
-		( z + frameCount ) / 2500
-		);
-
-	let vector = new THREE.Vector3( 1, 0, 0 );
-
-	let xAxis = Math.cos( frameCount * 0.5 ) * 0.5 + 0.5;
-	let yAxis = Math.sin( frameCount * 0.5 ) * 0.5 + 0.5;
-	let axis = new THREE.Vector3( xAxis, yAxis, xAxis*2 );
-	axis.normalize();
-
-	vector.applyAxisAngle( axis, Math.PI * noiseTwist * noiseValue);
-	return vector;
-}
 
 
 //
 // function loadJSON( callback ) {
 //
-// 	var xobj = new XMLHttpRequest();
+// 	let xobj = new XMLHttpRequest();
 // 	xobj.overrideMimeType("application/json");
 //   //xobj.open('GET', 'json/pointCloud_25-500.json', true);
 //   xobj.open('GET', JSON_PATH, true);

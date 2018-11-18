@@ -40,7 +40,6 @@ vec4 quat_from_axis_angle(vec3 axis, float angle) {
 }
 
 
-
 void main(){
   // COLOR UPDATE
   vColor = color;

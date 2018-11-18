@@ -4,16 +4,16 @@ function createFloor() {
 
   // Material
   let floorMaterial = new THREE.MeshPhysicalMaterial( {
-    color: 0xAAAAAA,
+    color: 0xFFFFFF,
     // emissive : 0x000000,
     //roughness : 0.5,
     //metalness : 0.5,
-    reflectivity : 0.0,
+    // reflectivity : 0.0,
     side : THREE.DoubleSide,
     flatShading : true,
     depthTest : false,
     transparent : true,
-    // opacity: 1.0,
+    opacity: 1.0,
     blending: THREE.AdditiveBlending,
     // wireframe : true,
     map : floorTexture

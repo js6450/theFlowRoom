@@ -1,35 +1,5 @@
 function createFlow() {
 
-  // Flow Particle Buffer
-
-  // Material
-  let flowMaterial = new THREE.MeshBasicMaterial( {
-    // color : 0xff0000,
-    vertexColors: THREE.VertexColors,
-    // blending: THREE.AdditiveBlending,
-    transparent: true,
-    opacity: 1.0,
-    depthTest : false,
-    side : THREE.DoubleSide,
-    //wireframe : true,
-    map: flowTexture
-  } );
-
-  let uniforms = {
-    texture: { value: textureLoader.load( "../img/spark.png" ) },
-    time: { value: 0.0 }
-  };
-  flowParticleMaterial = new THREE.ShaderMaterial( {
-    uniforms:       uniforms,
-    vertexShader:   ShaderLoader.get( "flowParticle_vert" ),
-    fragmentShader: ShaderLoader.get( "flowParticle_frag" ),
-    blending:       THREE.AdditiveBlending,
-    depthTest:      false,
-    transparent:    true,
-    vertexColors:   true
-  } );
-
-
   // Geometry
   flow = new ParticleBuffer( FLOW_PARTICLES_MAX );
   let flowGeometry = new THREE.BufferGeometry();
@@ -50,7 +20,7 @@ function createFlow() {
         flow.colors[ index * 3 + 1 ] = Math.random() * 0.5;
         flow.colors[ index * 3 + 2 ] = Math.random() * 1.0;
 
-        sizes.push( Math.random()*300 + 10 );
+        sizes.push( Math.random()*300 + 50 );
         index++;
       }
     }
